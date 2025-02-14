@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class CustomUser(AbstractUser):
@@ -20,7 +21,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(null=True, blank=True, upload_to='profile_pics/')
-    age = models.IntegerField(null=True, blank=True)
+    age = models.IntegerField(default=18)
     city = models.CharField(max_length=30, blank=True)
     country = models.CharField(max_length=30, blank=True)
     hobbies = models.ManyToManyField('Hobby', related_name='users')

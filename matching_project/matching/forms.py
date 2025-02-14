@@ -19,12 +19,11 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class UserProfileForm(forms.ModelForm):
-
+    age = forms.IntegerField(max_value=100, min_value=18)
     class Meta:
         model = UserProfile
-        fields = ('bio', 'profile_picture', 'age', 'city', 'country', 'hobbies')
+        fields = ('user', 'bio', 'profile_picture', 'age', 'city', 'country', 'hobbies')
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3}),
             'hobbies': forms.CheckboxSelectMultiple(),
         }
-    
