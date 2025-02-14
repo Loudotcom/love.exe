@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser, UserProfile, Hobby
+from .models import CustomUser, UserProfile, Hobby, DealbreakerAnswer, DealbreakerQuestion
 
 class CustomUserCreationForm(UserCreationForm):
     """
@@ -27,3 +27,15 @@ class UserProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'rows': 3}),
             'hobbies': forms.CheckboxSelectMultiple(),
         }
+
+
+class DealbreakerQuestionForm(forms.ModelForm):
+    class Meta:
+        model = DealbreakerQuestion
+        fields = ('text',)
+
+
+class DealbreakerAnswerForm(forms.ModelForm):
+    class Meta:
+        model = DealbreakerAnswer
+        fields = ('question', 'answer_yn')
