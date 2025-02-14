@@ -1,0 +1,38 @@
+<form action="{%  url 'profile' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div>
+        <label for="image">Profile Picture:</label>
+        {{ form.profile_picture }}
+
+    </div>
+    <div>
+        <label for="name">Name:</label>
+        {{ form.user.username }}
+    </div>
+    <div>
+        <label for="name">Bio:</label>
+        {{ form.bio }}
+    </div>
+    <div>
+        <label for="name">Age:</label>
+        {{ form.age }}
+    </div>
+
+    <div>
+        <label for="name">City</label>
+        {{ form.city }}
+    </div>
+    <div>
+        <label for="name">Country</label>
+        {{ form.country }}
+    </div>
+    <div>
+        <label for="name">Hobbies</label>
+        {{ form.hobbies }}
+    </div>
+
+    <div>
+        <button type="submit">Update</button>
+    </div>
+</form>
