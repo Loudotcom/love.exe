@@ -28,3 +28,6 @@ media/
 # Ignore system files
 .DS_Store
 Thumbs.db
+
+
+node_modules/
