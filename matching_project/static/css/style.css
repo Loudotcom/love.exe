@@ -1,13 +1,15 @@
 :root {
   /* Set colour  variables here */
+  --yel: #ffde47;
+  --green: #79d68e;
 }
 
 /* Home Page */
 
 .text-background {
-  background-color: #ffde47;
+  background-color: var(--yel);
 }
 
 .green-button {
-  background-color: #79D68E;
+  background-color: var(--green);
 }

@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
 <section>
     <h1>Welcome to your profile, {{ profile.user.username }}</h1>
 
@@ -7,25 +10,25 @@
         <p><strong>Age:</strong> {{ profile.age }}</p>
 
         {% if profile.city %}
-            <p><strong>City:</strong> {{ profile.city.name }}</p>
-        {% endif %}
-        
-        {% if profile.country %}
-            <p><strong>Country:</strong> {{ profile.country.name }}</p>
+        <p><strong>City:</strong> {{ profile.city.name }}</p>
         {% endif %}
 
-        <p><strong>Hobbies:</strong> 
+        {% if profile.country %}
+        <p><strong>Country:</strong> {{ profile.country.name }}</p>
+        {% endif %}
+
+        <p><strong>Hobbies:</strong>
             {% for hobby in profile.hobbies.all %}
-                {{ hobby.name }}{% if not forloop.last %}, {% endif %}
+            {{ hobby.name }}{% if not forloop.last %}, {% endif %}
             {% empty %}
-                No hobbies selected.
+            No hobbies selected.
             {% endfor %}
         </p>
 
         {% if profile.profile_picture %}
-            <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" width="150">
+        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" width="150">
         {% else %}
-            <img src="/static/default-profile.png" alt="Default Profile Picture" width="150">
+        <img src="/static/default-profile.png" alt="Default Profile Picture" width="150">
         {% endif %}
 
         <hr>
@@ -33,10 +36,11 @@
         <h2>Your Dealbreakers</h2>
         <ul>
             {% for answer in dealbreaker_answers %}
-                <li><strong>{{ answer.question.text }}</strong> - {{ answer.answer_yn|yesno:"Yes,No" }}</li>
+            <li><strong>{{ answer.question.text }}</strong> - {{ answer.answer_yn|yesno:"Yes,No" }}</li>
             {% empty %}
-                <li>No answers yet.</li>
+            <li>No answers yet.</li>
             {% endfor %}
         </ul>
     </div>
 </section>
+{% endblock %}
