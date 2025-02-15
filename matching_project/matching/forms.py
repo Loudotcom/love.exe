@@ -2,6 +2,7 @@ from logging import PlaceHolder
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, UserProfile, Hobby, DealbreakerAnswer, DealbreakerQuestion
+from cities_light.models import City, Country
 
 class CustomUserCreationForm(UserCreationForm):
     """
@@ -20,6 +21,16 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class UserProfileForm(forms.ModelForm):
+    country = forms.ModelChoiceField(
+        queryset=Country.objects.all(),
+        widget=forms.TextInput(attrs={'list': 'country-list', 'placeholder': 'Enter your country...'}),
+        required=True
+    )
+    city = forms.ModelChoiceField(
+        queryset=City.objects.all(),
+        widget=forms.TextInput(attrs={'list' : 'city-list', 'placeholder': 'Enter your city...'}),
+        required=True
+    )
     age = forms.IntegerField(max_value=100, min_value=18)
     class Meta:
         model = UserProfile
