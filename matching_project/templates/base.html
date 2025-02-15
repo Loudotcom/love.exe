@@ -1,0 +1,52 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/output.css' %}" />
+
+    <title>Home</title>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="container">
+                <ul class="flex">
+                    <li class="mr-3">
+                        <a class="inline-block border border-blue-500 rounded py-1 px-3 bg-blue-500 text-white"
+                            href="#">Active Pill</a>
+                    </li>
+                    <li class="mr-3">
+                        <a class="inline-block border border-white rounded hover:border-gray-200 text-blue-500 hover:bg-gray-200 py-1 px-3"
+                            href="#">Pill</a>
+                    </li>
+                    <li class="mr-3">
+                        <a class="inline-block py-1 px-3 text-gray-400 cursor-not-allowed" href="#">Disabled Pill</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div>
+        <main>
+            {% block content %}
+            <!-- Content Goes here -->
+            {% endblock content %}
+
+        </main>
+    </div>
+
+    <footer>
+
+    </footer>
+
+</body>
+
+</html>
