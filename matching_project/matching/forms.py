@@ -1,3 +1,4 @@
+from logging import PlaceHolder
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, UserProfile, Hobby, DealbreakerAnswer, DealbreakerQuestion
@@ -27,6 +28,7 @@ class UserProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'rows': 3}),
             'hobbies': forms.CheckboxSelectMultiple(),
         }
+
 
 
 class DealbreakerQuestionForm(forms.ModelForm):
