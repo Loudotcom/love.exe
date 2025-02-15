@@ -1,7 +1,11 @@
-from django.shortcuts import render, redirect
+from multiprocessing import context
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm, UserProfileForm, DealbreakerQuestionForm, DealbreakerAnswerForm
 from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile
+from django.contrib.auth.decorators import login_required
+
 
 def home(request):
     return render(request, 'home.html')
@@ -12,19 +16,20 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('profile')
+            return redirect('update-profile')
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
 
-def profile(request):
+@login_required
+def update_profile(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST' and 'update_profile' in request.POST:
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
         if form.is_valid():
             form.save()
-            return redirect('profile')
+            return redirect('update-profile')
     else:
         form = UserProfileForm(instance=user_profile)
 
@@ -34,7 +39,7 @@ def profile(request):
             question = question_form.save(commit=False)
             question.creator = request.user
             question.save()
-            return redirect('profile')
+            return redirect('update-profile')
     else:
         question_form = DealbreakerQuestionForm()
 
@@ -47,13 +52,13 @@ def profile(request):
             answer.user_profile = user_profile
             answer.question = question
             answer.save()
-            return redirect('profile')
+            return redirect('update-profile')
     else:
         answer_form = DealbreakerAnswerForm()
     user_questions = DealbreakerQuestion.objects.filter(creator=request.user)
     dealbreaker_answers = DealbreakerAnswer.objects.filter(user_profile=user_profile)
 
-    return render(request, 'registration/profile.html', {
+    return render(request, 'profile/update-profile.html', {
         'form': form,
         'question_form': question_form,
         'answer_form': answer_form,
@@ -61,3 +66,15 @@ def profile(request):
         'dealbreaker_answers': dealbreaker_answers
     })
 
+@login_required
+def profile(request):
+     
+    profile = UserProfile.objects.get(user=request.user)
+
+
+    context = {
+
+        'profile': profile,
+    }
+
+    return render(request, 'profile/profile.html', context)
