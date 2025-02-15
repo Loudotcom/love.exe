@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm, UserProfileForm, DealbreakerQuestionForm, DealbreakerAnswerForm
 from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile
 from django.contrib.auth.decorators import login_required
+from cities_light.models import City, Country
+
 
 
 def home(request):
@@ -55,6 +57,9 @@ def update_profile(request):
             return redirect('update-profile')
     else:
         answer_form = DealbreakerAnswerForm()
+
+    cities = City.objects.all()
+    countries = Country.objects.all()
     user_questions = DealbreakerQuestion.objects.filter(creator=request.user)
     dealbreaker_answers = DealbreakerAnswer.objects.filter(user_profile=user_profile)
 
@@ -63,7 +68,9 @@ def update_profile(request):
         'question_form': question_form,
         'answer_form': answer_form,
         'user_questions': user_questions,
-        'dealbreaker_answers': dealbreaker_answers
+        'dealbreaker_answers': dealbreaker_answers,
+        'cities': cities,
+        'countries': countries
     })
 
 @login_required

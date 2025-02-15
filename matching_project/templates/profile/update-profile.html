@@ -8,6 +8,17 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
+            <datalist id="country-list">
+                {% for country in countries %}
+                    <option value="{{ country.name }}">
+                {% endfor %}
+            </datalist>
+            <datalist id="city-list">
+                {% for city in cities %}
+                    <option value="{{ city.name }}">
+                {% endfor %}
+            </datalist>
+    
             <button type="submit" name="update_profile">Update Profile</button>
         </form>
 
