@@ -17,27 +17,73 @@
 <body>
 
     <header>
-        <nav>
-            <div class="container">
-                <ul class="flex">
-                    <li class="mr-3">
-                        <a class="inline-block border border-blue-500 rounded py-1 px-3 bg-blue-500 text-white"
-                            href="#">Active Pill</a>
-                    </li>
-                    <li class="mr-3">
-                        <a class="inline-block border border-white rounded hover:border-gray-200 text-blue-500 hover:bg-gray-200 py-1 px-3"
-                            href="#">Pill</a>
-                    </li>
-                    <li class="mr-3">
-                        <a class="inline-block py-1 px-3 text-gray-400 cursor-not-allowed" href="#">Disabled Pill</a>
-                    </li>
-                </ul>
+        <!-- Temp navbar to be moved to includes later  -->
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container mb-5">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <!-- Insert site logo here -->
+                    <!-- <img src="" width="30"
+                        height="30" class="d-inline-block align-top" alt=""> -->
+                    &ensp; Cirrus
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                {% if user.is_authenticated %}
+                <!-- Code for Logged In navbar -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'update-profile' %}">Edit Profile ({{ user }})</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+
+                {% else %}
+                <!-- Code for Logged Out Navbar  -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register (Not logged in)</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}">Login</a>
+                        </li>
+                        <!-- Extra links to delete just here for testing purposes -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'update-profile' %}">Edit Profile ({{ user }})</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </ul>
+                </div>
+                {% endif %}
             </div>
         </nav>
     </header>
 
-    <div>
-        <main>
+    <div class="container mt-5">
+        <main class="flex-shrink-0 main-bg">
             {% block content %}
             <!-- Content Goes here -->
             {% endblock content %}
