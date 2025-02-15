@@ -18,89 +18,32 @@
     <title>Home</title>
 </head>
 
-<body>
-
+<body class="d-flex flex-column min-vh-100">
     <header>
-        <!-- Temp navbar to be moved to includes later  -->
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container mb-5">
-                <a class="navbar-brand" href="{% url 'home' %}">
-                    <!-- Insert site logo here -->
-                    <!-- <img src="" width="30"
-                        height="30" class="d-inline-block align-top" alt=""> -->
-                    &ensp; Cirrus
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                {% if user.is_authenticated %}
-                <!-- Code for Logged In navbar -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'home' %}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'update-profile' %}">Edit Profile ({{ user }})</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                        </li>
-                    </ul>
-                </div>
-
-                {% else %}
-                <!-- Code for Logged Out Navbar  -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'home' %}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">Register (Not logged in)</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'home' %}">Login</a>
-                        </li>
-                        <!-- Extra links to delete just here for testing purposes -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'update-profile' %}">Edit Profile ({{ user }})</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                    </ul>
-                </div>
-                {% endif %}
-            </div>
-        </nav>
+        <!-- Navbar include (Do logic to make sure this isn't visible on the create profile page after signing up =) -->
+        {% include 'includes/navbar.html' %}
     </header>
 
-    <div class="container mt-5">
+    <div class="container mt-5 flex-grow-1">
         <main class="flex-shrink-0 main-bg">
             {% block content %}
             <!-- Content Goes here -->
             {% endblock content %}
-
+            request.path: {{ request.path }}
+            request.get_full_path {{ request.get_full_path }}
         </main>
     </div>
 
-    <footer>
+    <footer class="mt-auto">
+
+        {% include 'includes/footer.html' %}
 
     </footer>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    </div>
 </body>
 
 </html>
