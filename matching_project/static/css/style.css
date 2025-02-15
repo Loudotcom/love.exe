@@ -1,3 +1,13 @@
 :root {
   /* Set colour  variables here */
 }
+
+/* Home Page */
+
+.text-background {
+  background-color: #ffde47;
+}
+
+.green-button {
+  background-color: #79D68E;
+}
