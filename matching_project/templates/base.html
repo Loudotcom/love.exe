@@ -18,15 +18,13 @@
     <title>Home</title>
 </head>
 
-<body>
-    <div class="row container"></div>
-
+<body class="d-flex flex-column min-vh-100">
     <header>
         <!-- Navbar include (Do logic to make sure this isn't visible on the create profile page after signing up =) -->
         {% include 'includes/navbar.html' %}
     </header>
 
-    <div class="container mt-5">
+    <div class="container mt-5 flex-grow-1">
         <main class="flex-shrink-0 main-bg">
             {% block content %}
             <!-- Content Goes here -->
@@ -36,7 +34,7 @@
         </main>
     </div>
 
-    <footer>
+    <footer class="mt-auto">
 
         {% include 'includes/footer.html' %}
 
