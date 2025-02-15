@@ -166,8 +166,6 @@ As part of the development of the project, it was beneficial to perform our own 
 
 ### [Google Fonts](https://fonts.google.com)
 
-
-
 ### [Venngage](https://venngage.com/blog/accessible-colors/)
 
 Vengage was used to create a selection of accessible colour pallets, ensuring that there was suitable contrast between the chosen colours to keep the site accessible to all users
