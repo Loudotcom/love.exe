@@ -33,19 +33,19 @@ Link to deployed site
 
 #### Agile
 
-<!-- TODO: -->
-
-
+We chose to work in sprints, encouraging an agile development pipeline, where we are able to quickly adjust and respond to challenges in the development and address any issues that may occur in a fast and efficient manner.
 
 ###### [*Back to contents*](#contents)
 
 #### MoSCoW
 
-<!-- TODO: -->
+We used a github project board - allowing for the use of a MoSCoW prioritisation. This allowed us to keep foccused on the tasks that were required for the projects, ensuring a timely development timeline in keeping delivering a functioning project whilst working in defined sprints.
 
 ###### [*Back to contents*](#contents)
 
 ### Scope
+
+We wanted to create an inclusive website for matching people with desired interests and hobbies - while taking into account each users individual dealbreakers. To achieve this approach we decided that the photo of other users will be blurred until you have successfully passed the dealbreaker questions for another user - allowing for matches to be based more heavily on hobby and interest compatibilities and reducing the superficial nature matching people based solely on photos.
 
 <!-- TODO: -->
 
@@ -77,6 +77,26 @@ text
 ``` -->
 
 ### Wireframes
+
+#### Landing Page
+
+![Landing Page](docs/wireframes/landing-page.png)
+
+#### Register Page
+
+![Register Page](docs/wireframes/register.png)
+
+#### Login Page
+
+![Login Page](docs/wireframes/login.png)
+
+#### Logout Page
+
+![Logout Page](docs/wireframes/logout.png)
+
+#### Edit Profile Page
+
+![Edit Profile](docs/wireframes/edit-profile.png)
 
 TODO:
 
@@ -124,3 +144,30 @@ TODO:
 ### Postgres
 
 ### Visual Studio
+
+
+## Testing
+
+### Manual / Ongoing Testing
+
+As part of the development of the project, it was beneficial to perform our own testing before creating a pull request, this ensured that the need to go back and revisit code was kept to a minimum, helping to work more efficiently and keep the overall number of code reviews needed as low as possible.
+
+### Validation
+
+#### HTML
+
+#### JavaScript
+
+#### WAVE
+
+#### Lighthouse
+
+## Credits
+
+### [Google Fonts](https://fonts.google.com)
+
+
+
+### [Venngage](https://venngage.com/blog/accessible-colors/)
+
+Vengage was used to create a selection of accessible colour pallets, ensuring that there was suitable contrast between the chosen colours to keep the site accessible to all users
