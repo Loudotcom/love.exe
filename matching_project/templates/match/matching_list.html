@@ -1,0 +1,33 @@
+<h2>Find Your Match</h2>
+
+<form method="GET">
+    <label>Select up to 3 hobbies:</label><br>
+    {% for hobby in hobbies %}
+        <input type="checkbox" name="hobbies" value="{{ hobby.name }}" 
+            {% if hobby.name in selected_hobbies %} checked {% endif %}>
+        {{ hobby.name }}
+    {% endfor %}
+    <br>
+    <button type="submit">Filter</button>
+</form>
+
+<hr>
+{% for profile in profiles %}
+    <div class="profile-card">
+        {% if profile.profile_picture %}
+        <img src="{{ profile.profile_picture.url }}" class="blurred-image" alt="Profile Picture">
+        {% else %}
+        <img src="/static/default-profile.png" class="blurred-image" alt="Default Profile Picture">
+        {% endif %}
+        <p><strong>{{ profile.user.username }}</strong></p>
+        <p>{{ profile.bio|truncatewords:10 }}</p>
+        <button>View</button>
+    </div>
+{% empty %}
+    <p>No matches found. Try different hobbies.</p>
+{% endfor %}
+
+
+<style>
+    .blurred-image { filter: blur(10px); }
+</style>
