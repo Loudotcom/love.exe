@@ -1,8 +1,10 @@
 from logging import PlaceHolder
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.forms.widgets import PasswordInput, TextInput
 from .models import CustomUser, UserProfile, Hobby, DealbreakerAnswer, DealbreakerQuestion
 from cities_light.models import City, Country
+
 
 class CustomUserCreationForm(UserCreationForm):
     """
@@ -18,6 +20,13 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ('username', 'password1', 'password2',)
+
+
+class LoginForm(AuthenticationForm):
+
+    username = forms.CharField(widget=TextInput())
+
+    password = forms.CharField(widget=PasswordInput())
 
 
 class UserProfileForm(forms.ModelForm):
