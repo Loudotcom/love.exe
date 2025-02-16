@@ -6,13 +6,14 @@
   <div class="login-container">
       <h3 class="text-center mb-4 logo-c">Sign In</h3>
       <form  method="post">
+        {% csrf_token %}
           <div class="mb-3">
-              <label for="email" class="form-label">Email address</label>
-              <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+              <label for="id_username" class="form-label">Username</label>
+              {{form.username}}
           </div>
           <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+              <label for="id_password" class="form-label">Password</label>
+              {{form.password}}
           </div>
           <div class="mb-3 form-check">
               <input type="checkbox" class="form-check-input" id="rememberMe">
@@ -22,32 +23,20 @@
           <div class="text-center mt-3 text-c">
               <a href="#">Forgot password?</a> | <a href="#">Create an account</a>
           </div>
+          {% if form.errors %}
+          <div class="error">
+            <ul>
+              {% for field in form %}
+                {% for error in field.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
       </form>
   </div>
 </div>
-
-
-  <form method="post">
-    {% csrf_token %}
-    
-    {{ form.as_p }}
-
-    <div>
-      <button type="submit">Login</button>
-    </div>
-
-    {% if form.errors %}
-      <div class="error">
-        <ul>
-          {% for field in form %}
-            {% for error in field.errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-  </form>
 
 
   {% endblock %}
