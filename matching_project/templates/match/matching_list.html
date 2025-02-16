@@ -23,9 +23,9 @@
         <div class="row g-0">
             <div class="col-md-4">
                 {% if profile.profile_picture %}
-                <img src="{{ profile.profile_picture.url }}" class="blurred-image img-fluid rounded-start" alt="Profile Picture">
+                <img src="{{ profile.profile_picture.url }}" class="img-fluid rounded-start" alt="Profile Picture">
                 {% else %}
-                <img src="/static/default-profile.png" class="blurred-image rounded-start" alt="Default Profile Picture">
+                <img src="/static/default-profile.png" class="img-fluid rounded-start" alt="Default Profile Picture">
                 {% endif %}
             </div>
             <div class="col-md-8">
@@ -33,12 +33,8 @@
                     <p><strong>{{ profile.user.username }}</strong></p>
                     <p class="card-text">{{ profile.bio|truncatewords:10 }}</p>
                     <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ profile.id }}">
-                        View
+                        View Dealbreaker Questions
                     </button>
-                    <div id="like-dislike-container-{{ profile.id }}" data-content-type-id="{{ content_type.id }}" data-object-id="{{ profile.id }}">
-                        <button class="like-button btn btn-success btn-sm" data-vote="like">Like (<span id="like-count-{{ profile.id }}">{{ profile.total_likes }}</span>)</button>
-                        <button class="dislike-button btn btn-danger btn-sm" data-vote="dislike">Dislike (<span id="dislike-count-{{ profile.id }}">{{ profile.total_dislikes }}</span>)</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -72,6 +68,11 @@
                     <div id="error-message-{{ profile.id }}" class="alert alert-danger" style="display:none;">Sorry, this match is not for you.</div>
                     <button type="submit" class="btn btn-primary btn-sm" id="submit-button-{{ profile.id }}">Submit Answers</button>
                 </form>
+
+                <div id="like-dislike-container-{{ profile.id }}" style="display:none;">
+                    <button class="like-button btn btn-success btn-sm" data-vote="like">Like (<span id="like-count-{{ profile.id }}">0</span>)</button>
+                    <button class="dislike-button btn btn-danger btn-sm" data-vote="dislike">Dislike (<span id="dislike-count-{{ profile.id }}">0</span>)</button>
+                </div>
             </div>
         </div>
     </div>
@@ -81,51 +82,10 @@
     <p>No matches found. Try different hobbies.</p>
 {% endfor %}
 
-
-<style>
-    .blurred-image { filter: blur(10px); }
-</style>
-
-
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
 
 <script>
-    const containers = document.querySelectorAll('[id^="like-dislike-container-"]');
-
-    containers.forEach(container => {
-        const likeButton = container.querySelector('.like-button');
-        const dislikeButton = container.querySelector('.dislike-button');
-        const likeCount = container.querySelector('#like-count-' + container.dataset.objectId);
-        const dislikeCount = container.querySelector('#dislike-count-' + container.dataset.objectId);
-        
-        const contentTypeId = container.dataset.contentTypeId;
-        const objectId = container.dataset.objectId;
-
-        container.addEventListener('click', function(event) {
-            if (event.target.classList.contains('like-button') || event.target.classList.contains('dislike-button')) {
-                const vote = event.target.dataset.vote;
-
-                fetch('like_dislike/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    },
-                    body: `content_type_id=${contentTypeId}&object_id=${objectId}&vote=${vote}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (likeCount && dislikeCount) {
-                        likeCount.textContent = data.likes;
-                        dislikeCount.textContent = data.dislikes;
-                    } else {
-                        console.error('Error: Like/Dislike count elements not found');
-                    }
-                })
-                .catch(err => console.error('Error in fetch request:', err));
-            }
-        });
-    });
-
     document.querySelectorAll('[id^="dealbreaker-form-"]').forEach(form => {
         form.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -135,6 +95,7 @@
             const modalContent = document.getElementById(`modal-content-${profileId}`);
             const errorMessage = document.getElementById(`error-message-${profileId}`);
             const submitButton = form.querySelector(`#submit-button-${profileId}`);
+            const likeDislikeContainer = document.getElementById(`like-dislike-container-${profileId}`);
             const inputs = form.querySelectorAll('input[type="radio"], button');
 
             fetch(form.action, {
@@ -150,6 +111,11 @@
                     modalContent.innerHTML = data.html;
                     errorMessage.style.display = 'none';
 
+                    document.getElementById(`like-count-${profileId}`).textContent = data.like_count;
+                    document.getElementById(`dislike-count-${profileId}`).textContent = data.dislike_count;
+
+                    likeDislikeContainer.style.display = 'block';
+
                     inputs.forEach(input => input.disabled = true);
                 } else {
                     errorMessage.textContent = data.message;
@@ -161,6 +127,36 @@
             .catch(err => console.error('Error submitting answers:', err));
         });
     });
+    document.querySelectorAll('.like-button, .dislike-button').forEach(button => {
+        button.addEventListener('click', function(event) {
+            const profileId = this.closest('.modal').id.split('-')[1];
+            const vote = this.dataset.vote;
+
+            const formData = new FormData();
+            formData.append('content_type_id', '{{ content_type.id }}');
+            formData.append('object_id', profileId);
+            formData.append('vote', vote);
+
+            fetch("{% url 'like_dislike' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById(`like-count-${profileId}`).textContent = data.likes;
+                    document.getElementById(`dislike-count-${profileId}`).textContent = data.dislikes;
+                } else {
+                    console.error('Error updating like/dislike:', data.message);
+                }
+            })
+            .catch(err => console.error('Error sending like/dislike request:', err));
+        });
+    });
 </script>
+
 
 {% endblock %}
