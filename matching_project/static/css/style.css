@@ -15,6 +15,7 @@ body {
   font-family: 'Roboto', sans-serif;
   background-color: var(--soft-ivory);
   color: var(--elegant-wine);
+  padding-top: 58px;
 }
 
 h1, h2, h3 {
