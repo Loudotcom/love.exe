@@ -1,0 +1,23 @@
+<h2>Answer Dealbreaker Questions for {{ profile.user.username }}</h2>
+
+{% if success %}
+    <p style="color: green;">{{ success }}</p>
+{% elif error %}
+    <p style="color: red;">{{ error }}</p>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+    
+    {% for question in questions %}
+        <label>{{ question.text }}</label>
+        <br>
+        <input type="radio" name="question_{{ question.id }}" value="True" required> Yes
+        <input type="radio" name="question_{{ question.id }}" value="False" required> No
+        <br><br>
+    {% endfor %}
+    
+    <button type="submit">Submit Answers</button>
+</form>
+
+<a href="{% url 'match' %}">Back to Matches</a>

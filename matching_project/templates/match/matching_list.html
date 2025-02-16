@@ -21,7 +21,9 @@
         {% endif %}
         <p><strong>{{ profile.user.username }}</strong></p>
         <p>{{ profile.bio|truncatewords:10 }}</p>
-        <button>View</button>
+        <a href="{% url 'answer_dealbreaker_questions' profile.id %}">
+            <button type="button">View</button>
+        </a>
     </div>
 {% empty %}
     <p>No matches found. Try different hobbies.</p>
