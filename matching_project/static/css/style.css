@@ -220,3 +220,8 @@ legend.form-label {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: rgb(248 249 250);
 }
+
+footer { 
+  background-color: var(--elegant-wine);
+  color: var(--soft-ivory);
+}
