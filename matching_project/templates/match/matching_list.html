@@ -70,9 +70,11 @@
                 </form>
 
                 <div id="like-dislike-container-{{ profile.id }}" style="display:none;">
+                    
                     <button class="like-button btn btn-success btn-sm" data-vote="like">Like (<span id="like-count-{{ profile.id }}">0</span>)</button>
                     <button class="dislike-button btn btn-danger btn-sm" data-vote="dislike">Dislike (<span id="dislike-count-{{ profile.id }}">0</span>)</button>
                 </div>
+                <a href="{% url 'message_detail' profile_id=other_user %}">Message {{ other_user.username }}</a>
             </div>
         </div>
     </div>
