@@ -7,6 +7,11 @@ from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile, Hobby
 from django.contrib.auth.decorators import login_required
 from cities_light.models import City, Country
 from django.http import JsonResponse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
 
 
 
@@ -81,9 +86,12 @@ def update_profile(request):
 
 
 @login_required
-def profile(request):
-     
-    profile = UserProfile.objects.get(user=request.user)
+def profile(request, user_id=None):
+    if user_id:
+        profile = get_object_or_404(UserProfile, id=user_id)
+    else:
+        profile = UserProfile.objects.get(user=request.user)
+
     hobbies = profile.hobbies.all()
     dealbreaker_questions = profile.questions.all()
     dealbreaker_answers = DealbreakerAnswer.objects.filter(user_profile=profile)
@@ -121,3 +129,56 @@ def get_dealbreaker_questions(request, profile_id):
     questions = profile.questions.all().values('id', 'text', 'question_type')
 
     return JsonResponse({'questions': list(questions)})
+
+
+# @login_required
+# def profile_detail(request, user_id):
+#     try:
+#         profile = UserProfile.objects.get(user__id=user_id)
+#     except UserProfile.DoesNotExist:
+#         return redirect('profile')
+
+#     hobbies = profile.hobbies.all()
+#     dealbreaker_questions = profile.questions.all()
+
+#     context = {
+#         'profile': profile,
+#         'hobbies': hobbies,
+#         'dealbreaker_questions': dealbreaker_questions,
+#     }
+
+#     return render(request, 'profile/profile_detail.html', context)
+
+
+@login_required
+def answer_dealbreaker_questions(request, profile_id):
+    profile = get_object_or_404(UserProfile, id=profile_id)
+    questions = profile.questions.all()
+    stored_answers = DealbreakerAnswer.objects.filter(user_profile=profile)
+
+    correct_answers = {answer.question.id: answer.answer_yn for answer in stored_answers}
+    
+    if request.method == "POST":
+        user_answers = {
+            int(q_id): request.POST.get(f"question_{q_id}") == "True"
+            for q_id in correct_answers
+        }
+
+        all_correct = all(correct_answers[q_id] == user_answers[q_id] for q_id in correct_answers)
+
+        return render(request, 'match/answer_questions.html', {
+            'profile': profile,
+            'questions': questions,
+            'success': "Success! You answered correctly." if all_correct else "Incorrect answer. Try again."
+        })
+
+    return render(request, 'match/answer_questions.html', {
+        'profile': profile,
+        'questions': questions
+    })
+
+
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
+
+
