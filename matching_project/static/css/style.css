@@ -191,3 +191,18 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
 }
+.login-container {
+  max-width: 400px;
+  margin: auto;
+  margin-top: 10vh;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: rgb(248 249 250);
+}
+.text-c a{
+  color: #6a2135;
+}
+.logo-c{
+  color:rgb(220 53 69);
+}
