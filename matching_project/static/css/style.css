@@ -349,3 +349,44 @@ table td:nth-child(2) {
     padding: 0px;
   }
 }
+
+/* Add in styles from home2.html */
+.hero-slider img {
+  height: 500px;
+  object-fit: cover;
+}
+.search-bar {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border-radius: 10px;
+}
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #ff4d6d;
+  color: white;
+  font-size: 30px;
+}
+.signup a:hover {
+  color: white;
+}
+.search-box {
+  width: 0;
+  transition: width 0.4s ease-in-out;
+  overflow: hidden;
+  border: none;
+  outline: none;
+}
+.search-box:focus {
+  width: 200px;
+  border: 1px solid #ccc;
+  padding-left: 10px;
+}
+.search-container {
+  display: flex;
+  align-items: center;
+}
