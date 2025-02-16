@@ -1,16 +1,46 @@
+{% extends "base.html" %}
 {% load static %}
+{% block content %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/output.css' %}" />
-    
-    <title>Home</title>
-</head>
-<body>
-    <h1 class="text-3xl font-bold underline bg-sky-500/80">    Hello world!  </h1>
-</body>
-</html>
+<div class="vw-100 p-0 m-0">
+    <img class="img-fluid w-100 mt-0 mb-4" src="{% static 'maya-gm-ZatiL5Yx70U-unsplash.jpg' %}" alt="">
+</div>
+
+<div class="container d-flex p-2 text-center border border-3 border-dark rounded text-background">   
+    <div class="md-col">
+        <div class="row">
+    <p>
+        <strong>Tired of endless swiping and superficial connections?</strong>
+        <br><br>
+         At Cirrus, we're doing dating differently. If you're serious about finding a loving, long-lasting, and healthy relationship, you're in the right place!
+        <br><br>
+        Stop Wasting Time on Dead Ends.
+        <br><br>
+        Ever had that amazing first few dates, only to discover you're fundamentally incompatible? We get it. Cirrus is designed for those seeking deeper connections and real love.
+        <br><br>
+        <strong>What Makes Cirrus Different?</strong>
+        <br><br>
+        We believe in quality over quantity. Our unique system ensures you only connect with individuals who align with your core values and relationship goals.
+        <br><br>
+        With Cirrus, you control your dating destiny. Set your non-negotiables, and our intelligent matching system filters out anyone who doesn't meet your criteria. Say goodbye to wasted time and hello to meaningful connections.
+        <br><br>
+        Quality Matches, Lasting Love 
+        <br><br>
+        We're not just another dating site; we're your partner in finding "the one." By focusing on fundamental compatibility, Cirrus dramatically increases your chances of building the forever relationship you've always dreamed of.
+        <br><br>
+        Ready to find love that lasts? Join Cirrus today!
+        <br><br>
+    </p>
+</div>
+</div>
+</div>
+<div class="flex-container text-center">
+            <button type="button" class="btn mx-auto btn-lg mt-4 mb-4 green-button border-3 border-dark"><strong>Register Now!</strong></button>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}

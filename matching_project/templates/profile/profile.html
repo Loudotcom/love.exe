@@ -1,15 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
 <section>
-    <h1>Welcome to your profile </h1>
+    <h1>Welcome to your profile, {{ profile.user.username }}</h1>
 
     <div>
-        <p>Your username: {{ user.username }}</p>
-        <p>Your email: {{ profile.bio }}</p>
-        <p>Your profile picture: <img src="{{ profile.profile_picture.url }}" alt="Profile picture"></p>
-        <p>Your Age: {{ profile.age }}</p>
-        <p>Your Location: {{ profile.location }}</p>
-        <p>Your City: {{ profile.city }}</p>
-        <p>Your State: {{ profile.answer_yn}}</p>
-        <p>Your Country: {{ profile.question }}</p>
-        <p>Your hobbies: {{ profile.hobbies }}</p>
+        <p><strong>Username:</strong> {{ profile.user.username }}</p>
+        <p><strong>Bio:</strong> {{ profile.bio }}</p>
+        <p><strong>Age:</strong> {{ profile.age }}</p>
+
+        {% if profile.city %}
+        <p><strong>City:</strong> {{ profile.city.name }}</p>
+        {% endif %}
+
+        {% if profile.country %}
+        <p><strong>Country:</strong> {{ profile.country.name }}</p>
+        {% endif %}
+
+        <p><strong>Hobbies:</strong>
+            {% for hobby in profile.hobbies.all %}
+            {{ hobby.name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+            No hobbies selected.
+            {% endfor %}
+        </p>
+
+        {% if profile.profile_picture %}
+        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" width="150">
+        {% else %}
+        <img src="/static/default-profile.png" alt="Default Profile Picture" width="150">
+        {% endif %}
+
+        <hr>
+
+        <h2>Your Dealbreakers</h2>
+        <ul>
+            {% for answer in dealbreaker_answers %}
+            <li><strong>{{ answer.question.text }}</strong> - {{ answer.answer_yn|yesno:"Yes,No" }}</li>
+            {% empty %}
+            <li>No answers yet.</li>
+            {% endfor %}
+        </ul>
     </div>
 </section>
+{% endblock %}

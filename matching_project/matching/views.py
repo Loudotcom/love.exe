@@ -6,8 +6,16 @@ from .models import LikeDislike
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from .forms import CustomUserCreationForm, UserProfileForm, DealbreakerQuestionForm, DealbreakerAnswerForm
-from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile
+from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile, Hobby
 from django.contrib.auth.decorators import login_required
+from cities_light.models import City, Country
+from django.http import JsonResponse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+
 
 
 def home(request):
@@ -29,21 +37,22 @@ def register(request):
 @login_required
 def update_profile(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-
     if request.method == 'POST' and 'update_profile' in request.POST:
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
         if form.is_valid():
             form.save()
-            return redirect('update-profile')
+            return redirect('profile')
     else:
         form = UserProfileForm(instance=user_profile)
 
     if request.method == 'POST' and 'add_question' in request.POST:
         question_form = DealbreakerQuestionForm(request.POST)
         if question_form.is_valid():
-            question = question_form.save(commit=False)
-            question.creator = request.user
-            question.save()
+            new_question = question_form.save(commit=False)
+            new_question.creator = request.user
+            new_question.save()
+            user_profile.questions.add(new_question)
+            print(f"Question added: {new_question.text}")
             return redirect('update-profile')
     else:
         question_form = DealbreakerQuestionForm()
@@ -60,30 +69,122 @@ def update_profile(request):
             return redirect('update-profile')
     else:
         answer_form = DealbreakerAnswerForm()
+
+    cities = City.objects.all()
+    countries = Country.objects.all()
     user_questions = DealbreakerQuestion.objects.filter(creator=request.user)
     dealbreaker_answers = DealbreakerAnswer.objects.filter(user_profile=user_profile)
+
+    print(f"User's questions: {user_questions}")
+    print(f"User's answers: {dealbreaker_answers}")
 
     return render(request, 'profile/update-profile.html', {
         'form': form,
         'question_form': question_form,
         'answer_form': answer_form,
         'user_questions': user_questions,
-        'dealbreaker_answers': dealbreaker_answers
+        'dealbreaker_answers': dealbreaker_answers,
+        'cities': cities,
+        'countries': countries
     })
 
 
 @login_required
-def profile(request):
-     
-    profile = UserProfile.objects.get(user=request.user)
+def profile(request, user_id=None):
+    if user_id:
+        profile = get_object_or_404(UserProfile, id=user_id)
+    else:
+        profile = UserProfile.objects.get(user=request.user)
 
+    hobbies = profile.hobbies.all()
+    dealbreaker_questions = profile.questions.all()
+    dealbreaker_answers = DealbreakerAnswer.objects.filter(user_profile=profile)
 
     context = {
-
         'profile': profile,
+        'hobbies': hobbies,
+        'dealbreaker_questions': dealbreaker_questions,
+        'dealbreaker_answers': dealbreaker_answers,
     }
 
     return render(request, 'profile/profile.html', context)
+
+
+@login_required
+def matching_view(request):
+    selected_hobbies = request.GET.getlist('hobbies')[:3]
+    profiles = UserProfile.objects.exclude(user=request.user)
+
+    if selected_hobbies:
+        profiles = profiles.filter(hobbies__name__in=selected_hobbies).distinct()
+
+    hobbies = Hobby.objects.all()
+
+    return render(request, 'match/matching_list.html', {
+        'profiles': profiles,
+        'hobbies': hobbies,
+        'selected_hobbies': selected_hobbies
+    })
+
+@login_required
+def get_dealbreaker_questions(request, profile_id):
+    """Fetch dealbreaker questions for the selected profile."""
+    profile = get_object_or_404(UserProfile, id=profile_id)
+    questions = profile.questions.all().values('id', 'text', 'question_type')
+
+    return JsonResponse({'questions': list(questions)})
+
+
+# @login_required
+# def profile_detail(request, user_id):
+#     try:
+#         profile = UserProfile.objects.get(user__id=user_id)
+#     except UserProfile.DoesNotExist:
+#         return redirect('profile')
+
+#     hobbies = profile.hobbies.all()
+#     dealbreaker_questions = profile.questions.all()
+
+#     context = {
+#         'profile': profile,
+#         'hobbies': hobbies,
+#         'dealbreaker_questions': dealbreaker_questions,
+#     }
+
+#     return render(request, 'profile/profile_detail.html', context)
+
+
+@login_required
+def answer_dealbreaker_questions(request, profile_id):
+    profile = get_object_or_404(UserProfile, id=profile_id)
+    questions = profile.questions.all()
+    stored_answers = DealbreakerAnswer.objects.filter(user_profile=profile)
+
+    correct_answers = {answer.question.id: answer.answer_yn for answer in stored_answers}
+    
+    if request.method == "POST":
+        user_answers = {
+            int(q_id): request.POST.get(f"question_{q_id}") == "True"
+            for q_id in correct_answers
+        }
+
+        all_correct = all(correct_answers[q_id] == user_answers[q_id] for q_id in correct_answers)
+
+        return render(request, 'match/answer_questions.html', {
+            'profile': profile,
+            'questions': questions,
+            'success': "Success! You answered correctly." if all_correct else "Incorrect answer. Try again."
+        })
+
+    return render(request, 'match/answer_questions.html', {
+        'profile': profile,
+        'questions': questions
+    })
+
+
+def login(request):
+
+    return render(request, 'registration/login.html')
 
 
 

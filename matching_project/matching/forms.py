@@ -2,6 +2,7 @@ from logging import PlaceHolder
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, UserProfile, Hobby, DealbreakerAnswer, DealbreakerQuestion
+from cities_light.models import City, Country
 
 class CustomUserCreationForm(UserCreationForm):
     """
@@ -20,15 +21,37 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class UserProfileForm(forms.ModelForm):
+    country = forms.CharField(
+        widget=forms.TextInput(attrs={'list': 'country-list', 'placeholder': 'Enter your country...'}),
+        required=True
+    )
+    city = forms.CharField(
+        widget=forms.TextInput(attrs={'list': 'city-list', 'placeholder': 'Enter your city...'}),
+        required=True
+    )
     age = forms.IntegerField(max_value=100, min_value=18)
+    
     class Meta:
         model = UserProfile
-        fields = ('user', 'bio', 'profile_picture', 'age', 'city', 'country', 'hobbies')
+        fields = ('bio', 'profile_picture', 'age', 'city', 'country', 'hobbies')
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3}),
             'hobbies': forms.CheckboxSelectMultiple(),
         }
 
+    def clean_city(self):
+        city_name = self.cleaned_data['city']
+        city = City.objects.filter(name__iexact=city_name).first()
+        if not city:
+            raise forms.ValidationError("Selected city is not valid.")
+        return city
+
+    def clean_country(self):
+        country_name = self.cleaned_data['country']
+        country = Country.objects.filter(name__iexact=country_name).first()
+        if not country:
+            raise forms.ValidationError("Selected country is not valid.")
+        return country
 
 
 class DealbreakerQuestionForm(forms.ModelForm):
