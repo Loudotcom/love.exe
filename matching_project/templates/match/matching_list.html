@@ -1,6 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
 <h2>Find Your Match</h2>
 
 <form method="GET">
+    {% csrf_token %}
     <label>Select up to 3 hobbies:</label><br>
     {% for hobby in hobbies %}
         <input type="checkbox" name="hobbies" value="{{ hobby.name }}" 
@@ -33,3 +39,44 @@
 <style>
     .blurred-image { filter: blur(10px); }
 </style>
+
+<div id="like-dislike-container" data-content-type-id="{{ content_type.id }}" data-object-id="{{ object.id }}">
+
+    <button class="like-button" data-vote="like">Like (<span id="like-count">{{ object.total_likes }}</span>)</button>
+    <button class="dislike-button" data-vote="dislike">Dislike (<span id="dislike-count">{{ object.total_dislikes }}</span>)</button>
+</div>
+
+
+<script>
+    const container = document.getElementById('like-dislike-container');
+    const likeButton = container.querySelector('.like-button');
+    const dislikeButton = container.querySelector('.dislike-button');
+    const likeCount = document.getElementById('like-count');
+    const dislikeCount = document.getElementById('dislike-count');
+
+    container.addEventListener('click', function(event) {
+        if (event.target.classList.contains('like-button') || event.target.classList.contains('dislike-button')) {
+          const vote = event.target.dataset.vote;
+          const contentTypeId = container.dataset.contentTypeId;
+          const objectId = container.dataset.objectId;
+
+          fetch('like_dislike/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value // Important for CSRF protection
+              },
+              body: `content_type_id=${contentTypeId}&object_id=${objectId}&vote=${vote}`
+          })
+          .then(response => response.json())
+          .then(data => {
+              likeCount.textContent = data.likes;
+              dislikeCount.textContent = data.dislikes;
+          });
+        }
+    });
+
+</script>
+
+{% endblock %}
+

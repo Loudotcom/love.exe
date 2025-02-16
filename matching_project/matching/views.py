@@ -1,7 +1,10 @@
 from multiprocessing import context
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
+from django.http import JsonResponse
+from .models import LikeDislike
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from .forms import CustomUserCreationForm, UserProfileForm, DealbreakerQuestionForm, DealbreakerAnswerForm
 from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile, Hobby
 from django.contrib.auth.decorators import login_required
@@ -17,6 +20,7 @@ from django.urls import reverse_lazy
 
 def home(request):
     return render(request, 'home.html')
+
 
 def register(request):
     if request.method == 'POST':
@@ -164,13 +168,34 @@ def answer_dealbreaker_questions(request, profile_id):
 
     return render(request, 'profile/profile_detail.html', {
         'profile': profile,
-        'dealbreaker_questions': questions,
-        'all_answered_correctly': False
+        'questions': questions
     })
 
 
 
-class CustomLoginView(LoginView):
-    template_name = 'login.html'
+def login(request):
+
+    return render(request, 'registration/login.html')
 
 
+
+@login_required
+def like_dislike(request):
+    if request.method == 'POST':
+        content_type_id = request.POST.get('content_type_id')
+        object_id = request.POST.get('object_id')
+        vote = request.POST.get('vote')
+
+        content_type = get_object_or_404(ContentType, pk=content_type_id)
+        user_to_like = get_object_or_404(UserProfile, pk=object_id) 
+
+        try:
+            like_dislike_obj = LikeDislike.objects.get(
+                content_type=content_type, object_id=object_id, user=request.user
+            )
+        except LikeDislike.DoesNotExist:
+            like_dislike_obj = LikeDislike.objects.create(
+                content_type=content_type, object_id=object_id, user=request.user, like=(vote == 'like') if vote in ('like', 'dislike') else None
+            )
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
