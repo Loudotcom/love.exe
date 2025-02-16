@@ -163,15 +163,6 @@ def get_dealbreaker_questions(request, profile_id):
     return JsonResponse({'questions': list(questions)})
 
 
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
-from django.contrib.auth.decorators import login_required
-from .models import UserProfile, DealbreakerAnswer
-
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
-from django.contrib.auth.decorators import login_required
-from .models import UserProfile, DealbreakerAnswer
 
 @login_required
 def answer_dealbreaker_questions(request, profile_id):
@@ -216,17 +207,9 @@ def answer_dealbreaker_questions(request, profile_id):
 
 
 
-"""
-def login(request):
-
-    return render(request, 'registration/login.html')
-
-"""
-
-
 @login_required
-def message_detail(request, user_id):
-    other_user = get_object_or_404(UserProfile, id=user_id)
+def message_detail(request, profile_id):
+    other_user = get_object_or_404(UserProfile, id=profile_id)
     messages = Message.objects.filter(
         sender=request.user, recipient=other_user
     ) | Message.objects.filter(
@@ -240,11 +223,10 @@ def message_detail(request, user_id):
             Message.objects.create(
                 sender=request.user, recipient=other_user, content=content
             )
-            return redirect('profile', user_id=other_user.id)
+            return redirect('message_detail', profile_id=other_user.id)
+            
 
-    return render(request,'profile/profile.html', {'messages': messages, 'other_user': other_user})
-
-
+    return render(request, 'match/message_detail.html', {'messages': messages, 'other_user': other_user})
 
 
 

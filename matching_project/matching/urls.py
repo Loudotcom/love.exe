@@ -13,6 +13,5 @@ urlpatterns = [
     path('match/', views.matching_view, name='match'),
     path('get_dealbreaker_questions/<int:profile_id>/', views.get_dealbreaker_questions, name='get_dealbreaker_questions'),
     path('answer-dealbreaker/<int:profile_id>/', views.answer_dealbreaker_questions, name='answer_dealbreaker_questions'),
-    path('message/<int:user_id>/', views.message_detail, name='message_detail'),
+    path('message_detail/<int:profile_id>/', views.message_detail, name='message_detail'),
 ]
-
