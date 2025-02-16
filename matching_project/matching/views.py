@@ -1,11 +1,11 @@
 from multiprocessing import context
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
+from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.contrib.auth import login, authenticate
 from django.http import JsonResponse
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, auth
 from django.contrib.contenttypes.models import ContentType
-from .forms import CustomUserCreationForm, UserProfileForm, DealbreakerQuestionForm, DealbreakerAnswerForm
-from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile, Hobby, LikeDislike
+from .forms import CustomUserCreationForm, LoginForm, UserProfileForm, DealbreakerQuestionForm, DealbreakerAnswerForm
+from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile, Hobby, LikeDislike, Message
 from django.contrib.auth.decorators import login_required
 from cities_light.models import City, Country
 from django.views.decorators.csrf import csrf_exempt
@@ -23,11 +23,40 @@ def register(request):
         form = CustomUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            auth.login(request, user)
             return redirect('update-profile')
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
+
+
+
+def login(request):
+
+    form = LoginForm()
+
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                auth.login(request, user)
+                return redirect('home')
+            else:
+                print("Invalid username or password.")
+        else:
+            print(form.errors)
+
+    return render(request, 'registration/login.html', {'form': form})
+
+
+def logout(request):
+    auth.logout(request)
+    return redirect('home')
 
 
 @login_required
@@ -167,10 +196,35 @@ def answer_dealbreaker_questions(request, profile_id):
     })
 
 
-
+"""
 def login(request):
 
     return render(request, 'registration/login.html')
+
+"""
+
+
+@login_required
+def message_detail(request, user_id):
+    other_user = get_object_or_404(UserProfile, id=user_id)
+    messages = Message.objects.filter(
+        sender=request.user, recipient=other_user
+    ) | Message.objects.filter(
+        sender=other_user, recipient=request.user
+    ).order_by('sent_at')
+
+    if request.method == 'POST':
+        content = request.POST.get('content')
+
+        if content:
+            Message.objects.create(
+                sender=request.user, recipient=other_user, content=content
+            )
+            return redirect('profile', user_id=other_user.id)
+
+    return render(request,'profile/profile.html', {'messages': messages, 'other_user': other_user})
+
+
 
 
 

@@ -33,6 +33,17 @@ class LikeDislike(models.Model):
         return f'{self.user} - {self.content_object} - {self.like}'
 
 
+class Message(models.Model):
+    sender = models.ForeignKey(CustomUser, related_name='sent_messages', on_delete=models.CASCADE)
+    recipient = models.ForeignKey(CustomUser, related_name='received_messages', on_delete=models.CASCADE)
+    content = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+    read_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.sender} -> {self.recipient}'
+
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='profile')
