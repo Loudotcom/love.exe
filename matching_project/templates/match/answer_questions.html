@@ -1,20 +1,18 @@
-<h2>Answer Dealbreaker Questions for {{ profile.user.username }}</h2>
+<h1>Answer Dealbreaker Questions</h1>
 
-{% if success_message %}
-    <p style="color: green;">{{ success_message }}</p>
-{% elif error_message %}
+{% if error_message %}
     <p style="color: red;">{{ error_message }}</p>
 {% endif %}
 
 <form method="POST">
     {% csrf_token %}
     
-    {% for question in questions %}
-        <label>{{ question.text }}</label>
-        <br>
-        <input type="radio" name="question_{{ question.id }}" value="True" required> Yes
-        <input type="radio" name="question_{{ question.id }}" value="False" required> No
-        <br><br>
+    {% for question in dealbreaker_questions %}
+        <div class="question">
+            <p>{{ question.text }}</p>
+            <input type="radio" name="question_{{ question.id }}" value="True" required> Yes
+            <input type="radio" name="question_{{ question.id }}" value="False" required> No
+        </div>
     {% endfor %}
     
     <button type="submit">Submit Answers</button>

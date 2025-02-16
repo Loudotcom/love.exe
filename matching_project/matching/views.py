@@ -158,17 +158,13 @@ def answer_dealbreaker_questions(request, profile_id):
                 'all_answered_correctly': True
             })
         else:
-
-            return render(request, 'profile/profile_details.html', {
-                'profile': profile,
+            return render(request, 'match/answer_questions.html', {
                 'dealbreaker_questions': questions,
-                'all_answered_correctly': False,
-                'error_message': "Some answers are incorrect"
+                'error_message': "Some answers are incorrect."
             })
-
-    return render(request, 'profile/profile_detail.html', {
-        'profile': profile,
-        'questions': questions
+    
+    return render(request, 'match/answer_questions.html', {
+        'dealbreaker_questions': questions
     })
 
 
