@@ -1,0 +1,127 @@
+.profile-picture {
+    border-radius: 50% !important;
+}
+
+.profile-usertitle-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--deep-rose);
+}
+
+.profile-usertitle-job {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--passionate-red);
+}
+
+.profile-content ul, .card p, table td {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--elegant-wine);
+}
+
+.card {
+    border-radius: 10px;
+    background: var(--white);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.card hr {
+    border-top: 1px solid var(--blush-pink);
+    margin-top: 20px;
+}
+
+.badge {
+    background-color: var(--warm-peach);
+    color: var(--elegant-wine);
+    font-size: 14px;
+    margin: 2px 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.profile-content ul {
+    padding-left: 20px;
+}
+
+.btn {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 50px;
+}
+
+.btn-primary {
+    background-color: var(--passionate-red);
+    border-color: var(--passionate-red);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--deep-rose);
+}
+
+.btn-danger {
+    background-color: var(--elegant-wine);
+    border-color: var(--elegant-wine);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background-color: var(--passionate-red);
+}
+
+.profile-sidebar {
+    background: var(--blush-pink);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.profile-sidebar .profile-userpic img {
+    margin: 0 auto;
+    width: 150px;
+    height: 150px;
+}
+
+.mt-5 {
+    margin-top: 75px !important;
+}
+
+.mt-4 {
+    margin-top: 30px !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-background {
+    background-color: var(--yel);
+}
+
+.green-button {
+    background-color: var(--green);
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 15px;
+    }
+
+    .btn {
+        padding: 8px 15px;
+    }
+
+    .profile-usertitle-name {
+        font-size: 18px;
+    }
+
+    .profile-sidebar {
+        margin-bottom: 2rem;
+    }
+}
