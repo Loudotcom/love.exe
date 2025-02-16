@@ -171,7 +171,15 @@ def answer_dealbreaker_questions(request, profile_id):
                 </div>
             """
 
-            return JsonResponse({'status': 'success', 'html': profile_html})
+            like_count = LikeDislike.objects.filter(content_type=ContentType.objects.get_for_model(UserProfile), object_id=profile.id, like=True).count()
+            dislike_count = LikeDislike.objects.filter(content_type=ContentType.objects.get_for_model(UserProfile), object_id=profile.id, like=False).count()
+
+            return JsonResponse({
+                'status': 'success',
+                'html': profile_html,
+                'like_count': like_count,
+                'dislike_count': dislike_count
+            })
         else:
             return JsonResponse({'status': 'error', 'message': "Sorry, this match is not for you."})
 
