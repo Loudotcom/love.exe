@@ -74,7 +74,10 @@
                     <button class="like-button btn btn-success btn-sm" data-vote="like">Like (<span id="like-count-{{ profile.id }}">0</span>)</button>
                     <button class="dislike-button btn btn-danger btn-sm" data-vote="dislike">Dislike (<span id="dislike-count-{{ profile.id }}">0</span>)</button>
                 </div>
-                <a href="{% url 'message_detail' profile_id=other_user %}">Message {{ other_user.username }}</a>
+                
+                <div id="message-container-{{ profile.id }}" style="display:none;">
+                    <a href="{% url 'message_detail' profile_id=profile.id %}" class="btn btn-primary btn-sm">Message {{ profile.user.username }}</a>
+                </div>
             </div>
         </div>
     </div>
@@ -98,6 +101,7 @@
             const errorMessage = document.getElementById(`error-message-${profileId}`);
             const submitButton = form.querySelector(`#submit-button-${profileId}`);
             const likeDislikeContainer = document.getElementById(`like-dislike-container-${profileId}`);
+            const messageContainer = document.getElementById(`message-container-${profileId}`);
             const inputs = form.querySelectorAll('input[type="radio"], button');
 
             fetch(form.action, {
@@ -117,6 +121,7 @@
                     document.getElementById(`dislike-count-${profileId}`).textContent = data.dislike_count;
 
                     likeDislikeContainer.style.display = 'block';
+                    messageContainer.style.display = 'block';
 
                     inputs.forEach(input => input.disabled = true);
                 } else {
