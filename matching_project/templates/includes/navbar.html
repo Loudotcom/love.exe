@@ -1,12 +1,12 @@
+{% load static %}
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <!-- Ensure the user cannot access other pages once they register until they complete their profile -->
         <a class="navbar-brand fw-bold text-danger"
             href="{% if request.path != '/matching/update-profile/' %}{% url 'home' %}{% else %}{% url 'update-profile'%}{% endif %}">
             <!-- Insert site logo here -->
-            <!-- <img src="" width="30"
-                height="30" class="d-inline-block align-top" alt=""> -->
-            &ensp; Cirrus
+            <img src="{% static 'images/logo-bold.png' %}" height="45" class="d-inline-block align-top" alt="">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
