@@ -61,15 +61,46 @@ class UserProfileForm(forms.ModelForm):
         if not country:
             raise forms.ValidationError("Selected country is not valid.")
         return country
+        
 
 
 class DealbreakerQuestionForm(forms.ModelForm):
     class Meta:
         model = DealbreakerQuestion
         fields = ('text',)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        placeholders = {
+            'text': 'Text',
+        }
+        for field in self.fields:
+            placeholder = placeholders[field]
+            self.fields[field].widget.attrs['placeholder'] = placeholder
+            self.fields[field].widget.attrs['required'] = True
+            self.fields[field].label = False
 
 
 class DealbreakerAnswerForm(forms.ModelForm):
     class Meta:
         model = DealbreakerAnswer
         fields = ('question', 'answer_yn')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        placeholders = {
+            'question': 'question',
+            'answer_yn': 'answer_yn',
+        }
+
+        label = {
+            'question': 'Question',
+            'answer_yn': 'Yes or No?',
+        }
+
+        for field in self.fields:
+            placeholder = placeholders[field]
+            self.fields[field].widget.attrs['placeholder'] = placeholder
+            self.fields[field].widget.attrs['required'] = True
+            self.fields[field].label = False
+

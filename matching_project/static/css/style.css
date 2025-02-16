@@ -190,3 +190,8 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
 }
+
+legend.form-label {
+  font-size: 1rem !important;
+  list-style: ;
+}
