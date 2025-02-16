@@ -96,10 +96,7 @@ h1, h2, h3 {
   font-weight: 700;
 }
 
-.navbar-nav .nav-item .nav-link.btn-danger:hover {
-  background-color: var(--deep-rose);
-  color: var(--white);
-}
+
 
 @media (max-width: 991px) {
   .navbar-collapse {
