@@ -1,4 +1,6 @@
-
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
 <section>
 
     <h2>Edit your Profile</h2>
@@ -10,15 +12,15 @@
             {{ form.as_p }}
             <datalist id="country-list">
                 {% for country in countries %}
-                    <option value="{{ country.name }}">
-                {% endfor %}
+                <option value="{{ country.name }}">
+                    {% endfor %}
             </datalist>
             <datalist id="city-list">
                 {% for city in cities %}
-                    <option value="{{ city.name }}">
-                {% endfor %}
+                <option value="{{ city.name }}">
+                    {% endfor %}
             </datalist>
-    
+
             <button type="submit" name="update_profile">Update Profile</button>
         </form>
 
@@ -76,4 +78,4 @@
     <hr>
 
 </section>
-
+{% endblock %}

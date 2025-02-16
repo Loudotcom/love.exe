@@ -1,6 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
 <h2>Find Your Match</h2>
 
 <form method="GET">
+    {% csrf_token %}
     <label>Select up to 3 hobbies:</label><br>
     {% for hobby in hobbies %}
         <input type="checkbox" name="hobbies" value="{{ hobby.name }}" 
@@ -21,7 +27,13 @@
         {% endif %}
         <p><strong>{{ profile.user.username }}</strong></p>
         <p>{{ profile.bio|truncatewords:10 }}</p>
-        <button>View</button>
+        <a href="{% url 'answer_dealbreaker_questions' profile.id %}">
+            <button type="button">View</button>
+        </a>
+        <div id="like-dislike-container-{{ profile.id }}" data-content-type-id="{{ content_type.id }}" data-object-id="{{ profile.id }}">
+            <button class="like-button" data-vote="like">Like (<span id="like-count-{{ profile.id }}">{{ profile.total_likes }}</span>)</button>
+            <button class="dislike-button" data-vote="dislike">Dislike (<span id="dislike-count-{{ profile.id }}">{{ profile.total_dislikes }}</span>)</button>
+        </div>
     </div>
 {% empty %}
     <p>No matches found. Try different hobbies.</p>
@@ -31,3 +43,48 @@
 <style>
     .blurred-image { filter: blur(10px); }
 </style>
+
+
+
+<script>
+    const containers = document.querySelectorAll('[id^="like-dislike-container-"]');
+
+containers.forEach(container => {
+    const likeButton = container.querySelector('.like-button');
+    const dislikeButton = container.querySelector('.dislike-button');
+    const likeCount = container.querySelector('#like-count-' + container.dataset.objectId);
+    const dislikeCount = container.querySelector('#dislike-count-' + container.dataset.objectId);
+    
+    const contentTypeId = container.dataset.contentTypeId;
+    const objectId = container.dataset.objectId;
+
+    container.addEventListener('click', function(event) {
+        if (event.target.classList.contains('like-button') || event.target.classList.contains('dislike-button')) {
+            const vote = event.target.dataset.vote;
+
+            fetch('like_dislike/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: `content_type_id=${contentTypeId}&object_id=${objectId}&vote=${vote}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (likeCount && dislikeCount) {
+                    likeCount.textContent = data.likes;
+                    dislikeCount.textContent = data.dislikes;
+                } else {
+                    console.error('Error: Like/Dislike count elements not found');
+                }
+            })
+            .catch(err => console.error('Error in fetch request:', err));
+        }
+    });
+});
+
+</script>
+
+{% endblock %}
+
