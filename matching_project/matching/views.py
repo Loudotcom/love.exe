@@ -209,7 +209,8 @@ def answer_dealbreaker_questions(request, profile_id):
 
 @login_required
 def message_detail(request, profile_id):
-    other_user = get_object_or_404(UserProfile, id=profile_id)
+    other_user_profile = get_object_or_404(UserProfile, id=profile_id)
+    other_user = other_user_profile.user
     messages = Message.objects.filter(
         sender=request.user, recipient=other_user
     ) | Message.objects.filter(
@@ -223,8 +224,8 @@ def message_detail(request, profile_id):
             Message.objects.create(
                 sender=request.user, recipient=other_user, content=content
             )
-            return redirect('message_detail', profile_id=other_user.id)
-            
+            return redirect('message_detail', profile_id=other_user_profile.id)
+
 
     return render(request, 'match/message_detail.html', {'messages': messages, 'other_user': other_user})
 
