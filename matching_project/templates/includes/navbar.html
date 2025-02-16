@@ -12,11 +12,6 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-
-
-        <!-- Code for Logged In navbar -->
-        {% if user.is_authenticated %}
-
         <!-- If the user has not created a profile yet, they cannot access further pages -->
         {% if request.path != '/matching/update-profile/' %}
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -24,6 +19,9 @@
                 <li class="nav-item">
                     <a class="nav-link text-center" href="{% url 'home' %}">Home</a>
                 </li>
+
+                <!-- Pages available for logged in users -->
+                {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link text-center" href="{% url 'match' %}">Find your Match</a>
                 </li>
@@ -36,38 +34,16 @@
                 <li class="nav-item">
                     <a class="nav-link text-center" href="{% url 'logout' %}">Logout</a>
                 </li>
-            </ul>
-        </div>
-        {% endif %}
 
-        {% else %}
-        <!-- Code for Logged Out Navbar  -->
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="{% url 'home' %}">Home</a>
-                </li>
+                <!-- Pages for logged out users -->
+                {% else %}
                 <li class="nav-item">
                     <a class="nav-link text-center" href="{% url 'login' %}">Login</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link btn btn-danger text-center" href="{% url 'register' %}">Register</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="{% url 'home' %}">Login</a>
-                </li>
-                <!-- Extra links to delete just here for testing purposes -->
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="{% url 'match' %}">Find your Match</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="{% url 'profile' %}">Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="{% url 'update-profile' %}">Edit Profile ({{ user }})</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="{% url 'logout' %}">Logout</a>
+                {% endif %}
             </ul>
         </div>
         {% endif %}
