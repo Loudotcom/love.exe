@@ -2,18 +2,14 @@ from multiprocessing import context
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.http import JsonResponse
-from .models import LikeDislike
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from .forms import CustomUserCreationForm, UserProfileForm, DealbreakerQuestionForm, DealbreakerAnswerForm
-from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile, Hobby
+from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile, Hobby, LikeDislike
 from django.contrib.auth.decorators import login_required
 from cities_light.models import City, Country
-from django.http import JsonResponse
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 
 
@@ -119,12 +115,15 @@ def matching_view(request):
         profiles = profiles.filter(hobbies__name__in=selected_hobbies).distinct()
 
     hobbies = Hobby.objects.all()
+    content_type = ContentType.objects.get_for_model(UserProfile)
 
     return render(request, 'match/matching_list.html', {
         'profiles': profiles,
         'hobbies': hobbies,
-        'selected_hobbies': selected_hobbies
+        'selected_hobbies': selected_hobbies,
+        'content_type': content_type
     })
+
 
 @login_required
 def get_dealbreaker_questions(request, profile_id):
@@ -158,17 +157,13 @@ def answer_dealbreaker_questions(request, profile_id):
                 'all_answered_correctly': True
             })
         else:
-
-            return render(request, 'profile/profile_details.html', {
-                'profile': profile,
+            return render(request, 'match/answer_questions.html', {
                 'dealbreaker_questions': questions,
-                'all_answered_correctly': False,
-                'error_message': "Some answers are incorrect"
+                'error_message': "Some answers are incorrect."
             })
-
-    return render(request, 'profile/profile_detail.html', {
-        'profile': profile,
-        'questions': questions
+    
+    return render(request, 'match/answer_questions.html', {
+        'dealbreaker_questions': questions
     })
 
 
@@ -193,9 +188,20 @@ def like_dislike(request):
             like_dislike_obj = LikeDislike.objects.get(
                 content_type=content_type, object_id=object_id, user=request.user
             )
+            like_dislike_obj.like = (vote == 'like')
+            like_dislike_obj.save()
         except LikeDislike.DoesNotExist:
             like_dislike_obj = LikeDislike.objects.create(
-                content_type=content_type, object_id=object_id, user=request.user, like=(vote == 'like') if vote in ('like', 'dislike') else None
+                content_type=content_type, object_id=object_id, user=request.user, like=(vote == 'like')
             )
+            
+        like_count = LikeDislike.objects.filter(content_type=content_type, object_id=object_id, like=True).count()
+        dislike_count = LikeDislike.objects.filter(content_type=content_type, object_id=object_id, like=False).count()
+
+        return JsonResponse({
+            'status': 'success',
+            'likes': like_count,
+            'dislikes': dislike_count
+        })
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
