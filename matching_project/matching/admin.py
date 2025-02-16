@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, Hobby, UserProfile, DealbreakerQuestion, DealbreakerAnswer
+from .models import CustomUser, Hobby, UserProfile, DealbreakerQuestion, DealbreakerAnswer, Message
 
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email',)
@@ -29,3 +29,10 @@ class DealbreakerAnswerAdmin(admin.ModelAdmin):
     search_fields = ('user_profile__user__username', 'question__text')
 
 admin.site.register(DealbreakerAnswer, DealbreakerAnswerAdmin)
+
+
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'recipient', 'content', 'date_sent')
+
+
+admin.site.register(Message)
