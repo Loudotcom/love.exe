@@ -1,7 +1,10 @@
 from multiprocessing import context
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
+from django.http import JsonResponse
+from .models import LikeDislike
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from .forms import CustomUserCreationForm, UserProfileForm, DealbreakerQuestionForm, DealbreakerAnswerForm
 from .models import DealbreakerAnswer, DealbreakerQuestion, UserProfile
 from django.contrib.auth.decorators import login_required
@@ -9,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request, 'home.html')
+
 
 def register(request):
     if request.method == 'POST':
@@ -20,6 +24,7 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
+
 
 @login_required
 def update_profile(request):
@@ -66,6 +71,7 @@ def update_profile(request):
         'dealbreaker_answers': dealbreaker_answers
     })
 
+
 @login_required
 def profile(request):
      
@@ -78,3 +84,26 @@ def profile(request):
     }
 
     return render(request, 'profile/profile.html', context)
+
+
+
+@login_required
+def like_dislike(request):
+    if request.method == 'POST':
+        content_type_id = request.POST.get('content_type_id')
+        object_id = request.POST.get('object_id')
+        vote = request.POST.get('vote')
+
+        content_type = get_object_or_404(ContentType, pk=content_type_id)
+        user_to_like = get_object_or_404(UserProfile, pk=object_id) 
+
+        try:
+            like_dislike_obj = LikeDislike.objects.get(
+                content_type=content_type, object_id=object_id, user=request.user
+            )
+        except LikeDislike.DoesNotExist:
+            like_dislike_obj = LikeDislike.objects.create(
+                content_type=content_type, object_id=object_id, user=request.user, like=(vote == 'like') if vote in ('like', 'dislike') else None
+            )
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})

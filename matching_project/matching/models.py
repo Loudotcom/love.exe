@@ -1,5 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 
 class CustomUser(AbstractUser):
@@ -14,10 +17,25 @@ class Hobby(models.Model):
     
     def __str__(self):
         return self.name
+    
+
+class LikeDislike(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='like_dislikes')
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    like = models.BooleanField(null=True)
+
+    class Meta:
+        unique_together = ('content_type', 'user_id', 'user')
+
+    def __str__(self):
+        return f'{self.user} - {self.content_object} - {self.like}'
+
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='profile')
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(null=True, blank=True, upload_to='profile_pics/')
     age = models.IntegerField(default=18)
@@ -27,6 +45,7 @@ class UserProfile(models.Model):
     questions = models.ManyToManyField('DealbreakerQuestion', related_name='user_profiles', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    likes = GenericRelation(LikeDislike)
 
     def __str__(self):
         return f'{self.user.username} Profile'

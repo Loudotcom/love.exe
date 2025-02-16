@@ -3,6 +3,13 @@
 
     <div>
         <p>Your username: {{ user.username }}</p>
-        <p>Your email: {{ user.profile.bio }}</p>
+        <p>Your email: {{ profile.bio }}</p>
+        <p>Your profile picture: <img src="{{ profile.profile_picture.url }}" alt="Profile picture"></p>
+        <p>Your Age: {{ profile.age }}</p>
+        <p>Your Location: {{ profile.location }}</p>
+        <p>Your City: {{ profile.city }}</p>
+        <p>Your State: {{ profile.answer_yn}}</p>
+        <p>Your Country: {{ profile.question }}</p>
+        <p>Your hobbies: {{ profile.hobbies }}</p>
     </div>
 </section>
