@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block content %}
-
 <h2>Find Your Match</h2>
 
 <form method="GET">
@@ -14,27 +13,70 @@
         {{ hobby.name }}
     {% endfor %}
     <br>
-    <button type="submit">Filter</button>
+    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
 </form>
 
 <hr>
+
 {% for profile in profiles %}
-    <div class="profile-card">
-        {% if profile.profile_picture %}
-        <img src="{{ profile.profile_picture.url }}" class="blurred-image" alt="Profile Picture">
-        {% else %}
-        <img src="/static/default-profile.png" class="blurred-image" alt="Default Profile Picture">
-        {% endif %}
-        <p><strong>{{ profile.user.username }}</strong></p>
-        <p>{{ profile.bio|truncatewords:10 }}</p>
-        <a href="{% url 'answer_dealbreaker_questions' profile.id %}">
-            <button type="button">View</button>
-        </a>
-        <div id="like-dislike-container-{{ profile.id }}" data-content-type-id="{{ content_type.id }}" data-object-id="{{ profile.id }}">
-            <button class="like-button" data-vote="like">Like (<span id="like-count-{{ profile.id }}">{{ profile.total_likes }}</span>)</button>
-            <button class="dislike-button" data-vote="dislike">Dislike (<span id="dislike-count-{{ profile.id }}">{{ profile.total_dislikes }}</span>)</button>
+    <div class="profile-card card mb-3" style="max-width: 18rem;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" class="blurred-image img-fluid rounded-start" alt="Profile Picture">
+                {% else %}
+                <img src="/static/default-profile.png" class="blurred-image rounded-start" alt="Default Profile Picture">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <p><strong>{{ profile.user.username }}</strong></p>
+                    <p class="card-text">{{ profile.bio|truncatewords:10 }}</p>
+                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ profile.id }}">
+                        View
+                    </button>
+                    <div id="like-dislike-container-{{ profile.id }}" data-content-type-id="{{ content_type.id }}" data-object-id="{{ profile.id }}">
+                        <button class="like-button btn btn-success btn-sm" data-vote="like">Like (<span id="like-count-{{ profile.id }}">{{ profile.total_likes }}</span>)</button>
+                        <button class="dislike-button btn btn-danger btn-sm" data-vote="dislike">Dislike (<span id="dislike-count-{{ profile.id }}">{{ profile.total_dislikes }}</span>)</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+<div class="modal fade" id="exampleModal-{{ profile.id }}" tabindex="-1" aria-labelledby="exampleModalLabel-{{ profile.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel-{{ profile.id }}">Dealbreaker Questions for {{ profile.user.username }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-content-{{ profile.id }}"></div>
+
+                <form id="dealbreaker-form-{{ profile.id }}" method="POST" action="{% url 'answer_dealbreaker_questions' profile.id %}" data-profile-id="{{ profile.id }}">
+                    {% csrf_token %}
+                    {% for question in profile.questions.all %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ question.text }}</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="True" required>
+                                <label class="form-check-label">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="False" required>
+                                <label class="form-check-label">No</label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div id="error-message-{{ profile.id }}" class="alert alert-danger" style="display:none;">Sorry, this match is not for you.</div>
+                    <button type="submit" class="btn btn-primary btn-sm" id="submit-button-{{ profile.id }}">Submit Answers</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% empty %}
     <p>No matches found. Try different hobbies.</p>
 {% endfor %}
@@ -49,42 +91,76 @@
 <script>
     const containers = document.querySelectorAll('[id^="like-dislike-container-"]');
 
-containers.forEach(container => {
-    const likeButton = container.querySelector('.like-button');
-    const dislikeButton = container.querySelector('.dislike-button');
-    const likeCount = container.querySelector('#like-count-' + container.dataset.objectId);
-    const dislikeCount = container.querySelector('#dislike-count-' + container.dataset.objectId);
-    
-    const contentTypeId = container.dataset.contentTypeId;
-    const objectId = container.dataset.objectId;
+    containers.forEach(container => {
+        const likeButton = container.querySelector('.like-button');
+        const dislikeButton = container.querySelector('.dislike-button');
+        const likeCount = container.querySelector('#like-count-' + container.dataset.objectId);
+        const dislikeCount = container.querySelector('#dislike-count-' + container.dataset.objectId);
+        
+        const contentTypeId = container.dataset.contentTypeId;
+        const objectId = container.dataset.objectId;
 
-    container.addEventListener('click', function(event) {
-        if (event.target.classList.contains('like-button') || event.target.classList.contains('dislike-button')) {
-            const vote = event.target.dataset.vote;
+        container.addEventListener('click', function(event) {
+            if (event.target.classList.contains('like-button') || event.target.classList.contains('dislike-button')) {
+                const vote = event.target.dataset.vote;
 
-            fetch('like_dislike/', {
+                fetch('like_dislike/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: `content_type_id=${contentTypeId}&object_id=${objectId}&vote=${vote}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (likeCount && dislikeCount) {
+                        likeCount.textContent = data.likes;
+                        dislikeCount.textContent = data.dislikes;
+                    } else {
+                        console.error('Error: Like/Dislike count elements not found');
+                    }
+                })
+                .catch(err => console.error('Error in fetch request:', err));
+            }
+        });
+    });
+
+    document.querySelectorAll('[id^="dealbreaker-form-"]').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const profileId = form.dataset.profileId;
+            const formData = new FormData(form);
+            const modalContent = document.getElementById(`modal-content-${profileId}`);
+            const errorMessage = document.getElementById(`error-message-${profileId}`);
+            const submitButton = form.querySelector(`#submit-button-${profileId}`);
+            const inputs = form.querySelectorAll('input[type="radio"], button');
+
+            fetch(form.action, {
                 method: 'POST',
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: `content_type_id=${contentTypeId}&object_id=${objectId}&vote=${vote}`
+                }
             })
             .then(response => response.json())
             .then(data => {
-                if (likeCount && dislikeCount) {
-                    likeCount.textContent = data.likes;
-                    dislikeCount.textContent = data.dislikes;
+                if (data.status === 'success') {
+                    modalContent.innerHTML = data.html;
+                    errorMessage.style.display = 'none';
+
+                    inputs.forEach(input => input.disabled = true);
                 } else {
-                    console.error('Error: Like/Dislike count elements not found');
+                    errorMessage.textContent = data.message;
+                    errorMessage.style.display = 'block';
+
+                    inputs.forEach(input => input.disabled = true);
                 }
             })
-            .catch(err => console.error('Error in fetch request:', err));
-        }
+            .catch(err => console.error('Error submitting answers:', err));
+        });
     });
-});
-
 </script>
 
 {% endblock %}
-

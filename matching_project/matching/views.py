@@ -134,6 +134,16 @@ def get_dealbreaker_questions(request, profile_id):
     return JsonResponse({'questions': list(questions)})
 
 
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
+from .models import UserProfile, DealbreakerAnswer
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
+from .models import UserProfile, DealbreakerAnswer
+
 @login_required
 def answer_dealbreaker_questions(request, profile_id):
     profile = get_object_or_404(UserProfile, id=profile_id)
@@ -150,21 +160,23 @@ def answer_dealbreaker_questions(request, profile_id):
         all_answered_correctly = all(correct_answers[q_id] == user_answers[q_id] for q_id in correct_answers)
 
         if all_answered_correctly:
+            profile_html = f"""
+                <div>
+                    <p><strong>Bio:</strong> {profile.bio}</p>
+                    <p><strong>Age:</strong> {profile.age}</p>
+                    <p><strong>City:</strong> {profile.city.name}</p>
+                    <p><strong>Country:</strong> {profile.country.name}</p>
+                    <p><strong>Hobbies:</strong> {", ".join(hobby.name for hobby in profile.hobbies.all())}</p>
+                    <img src="{profile.profile_picture.url if profile.profile_picture else '/static/default-profile.png'}" alt="Profile Picture" width="150">
+                </div>
+            """
 
-            return render(request, 'profile/profile_detail.html', {
-                'profile': profile,
-                'dealbreaker_questions': questions,
-                'all_answered_correctly': True
-            })
+            return JsonResponse({'status': 'success', 'html': profile_html})
         else:
-            return render(request, 'match/answer_questions.html', {
-                'dealbreaker_questions': questions,
-                'error_message': "Some answers are incorrect."
-            })
-    
-    return render(request, 'match/answer_questions.html', {
-        'dealbreaker_questions': questions
-    })
+            return JsonResponse({'status': 'error', 'message': "Sorry, this match is not for you."})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
 
 
 
