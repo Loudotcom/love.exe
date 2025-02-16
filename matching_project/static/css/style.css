@@ -191,6 +191,12 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
 }
+
+legend.form-label {
+  font-size: 1rem !important;
+}
+
+
 .login-container {
   max-width: 400px;
   margin: auto;
@@ -200,9 +206,11 @@ h1, h2, h3 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: rgb(248 249 250);
 }
+
 .text-c a{
   color: #6a2135;
 }
+
 .logo-c{
   color:rgb(220 53 69);
 }

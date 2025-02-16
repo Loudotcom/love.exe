@@ -1,81 +1,102 @@
-{% extends "base.html" %}
+{% extends "base.html" %}]
+{% load crispy_forms_tags %}
 {% load static %}
 {% block content %}
-<section>
+<section class="container-fluid mb-3">
 
-    <h2>Edit your Profile</h2>
+    <div class="row">
 
-    <div>
+        <h2 class="display-4 mb-5">Edit your Profile</h2>
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <datalist id="country-list">
-                {% for country in countries %}
-                <option value="{{ country.name }}">
-                    {% endfor %}
-            </datalist>
-            <datalist id="city-list">
-                {% for city in cities %}
-                <option value="{{ city.name }}">
-                    {% endfor %}
-            </datalist>
+        <div class="col-lg-6 col-md-12 m-auto">
 
-            <button type="submit" name="update_profile">Update Profile</button>
-        </form>
+            <div class="profile-sidebar p-4 shadow-sm">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <datalist id="country-list">
+                        {% for country in countries %}
+                        <option value="{{ country.name }}">
+                            {% endfor %}
+                    </datalist>
+                    <datalist id="city-list">
+                        {% for city in cities %}
+                        <option value="{{ city.name }}">
+                            {% endfor %}
+                    </datalist>
+                    <div class="d-flex">
+                        <button type="submit" name="update_profile" class="btn btn-primary btn-sm mx-auto">Update Profile</button>
 
+                    </div>
+    
+                    
+                </form>
 
-    </div>
+            </div>
 
-    <hr>
+            <br>
 
+            <hr>
 
-    <div>
+            <br>
 
-        <h2>Create a New Dealbreaker Question</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ question_form.as_p }}
-            <button type="submit" name="add_question">Add Question</button>
-        </form>
+            <h2 class="display-4">Create your Dealbreakers</h2>
+            <br>
 
-        <hr>
-
-
-        <h2>Your Dealbreaker Questions</h2>
-
-        <ul>
-            {% for question in user_questions %}
-            <li>
-                <strong>Q: {{ question.text }}</strong>
-                <br>
+            <div class="profile-sidebar text-center p-4 shadow-sm">
+    
+                
                 <form method="post">
                     {% csrf_token %}
-                    <input type="hidden" name="question" value="{{ question.id }}">
-                    {{ answer_form.answer_yn }}
-                    <button type="submit" name="answer_question">Submit Answer</button>
+                    {{ question_form |crispy }}
+                    <button type="submit" name="add_question" class="btn btn-primary btn-sm">Add Question</button>
                 </form>
-            </li>
-            {% empty %}
-            <li>No questions yet.</li>
-            {% endfor %}
-        </ul>
+    
+                <hr>
+
+
+                <h2>Your Dealbreaker Questions</h2>
+                <br>
+    
+                <ul class="p-0">
+                    {% for question in user_questions %}
+                    <li class="list-unstyled">
+                        <strong>Q: {{ question.text }}</strong>
+                        <br>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="question" value="{{ question.id }}">
+                            {{ answer_form |crispy }}
+                            <button type="submit" name="answer_question" class="btn btn-primary btn-sm">Submit Answer</button>
+                        </form>
+                    </li>
+                    {% empty %}
+                    <li class="list-unstyled">No questions yet.</li>
+                    {% endfor %}
+                </ul>
+
+                <hr>
+
+    
+                <h2>Your Answers</h2>
+                <br>
+                <ul>
+                    {% for answer in dealbreaker_answers %}
+                    <li class="list-unstyled"><strong>{{ answer.question.text }}</strong> - {{ answer.answer_yn|yesno:"Yes,No" }}</li>
+                    {% empty %}
+                    <li class="list-unstyled">No answers yet.</li>
+                    {% endfor %}
+                </ul>
+    
+    
+            </div>
+            <br>
+
+        </div>
 
         <hr>
 
-        <h2>Your Answers</h2>
-        <ul>
-            {% for answer in dealbreaker_answers %}
-            <li><strong>{{ answer.question.text }}</strong> - {{ answer.answer_yn|yesno:"Yes,No" }}</li>
-            {% empty %}
-            <li>No answers yet.</li>
-            {% endfor %}
-        </ul>
-
-
     </div>
-
-    <hr>
 
 </section>
 {% endblock %}
