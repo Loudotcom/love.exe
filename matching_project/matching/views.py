@@ -131,51 +131,43 @@ def get_dealbreaker_questions(request, profile_id):
     return JsonResponse({'questions': list(questions)})
 
 
-# @login_required
-# def profile_detail(request, user_id):
-#     try:
-#         profile = UserProfile.objects.get(user__id=user_id)
-#     except UserProfile.DoesNotExist:
-#         return redirect('profile')
-
-#     hobbies = profile.hobbies.all()
-#     dealbreaker_questions = profile.questions.all()
-
-#     context = {
-#         'profile': profile,
-#         'hobbies': hobbies,
-#         'dealbreaker_questions': dealbreaker_questions,
-#     }
-
-#     return render(request, 'profile/profile_detail.html', context)
-
-
 @login_required
 def answer_dealbreaker_questions(request, profile_id):
     profile = get_object_or_404(UserProfile, id=profile_id)
-    questions = profile.questions.all()
+    questions = profile.questions.all() 
     stored_answers = DealbreakerAnswer.objects.filter(user_profile=profile)
-
     correct_answers = {answer.question.id: answer.answer_yn for answer in stored_answers}
-    
+
     if request.method == "POST":
         user_answers = {
             int(q_id): request.POST.get(f"question_{q_id}") == "True"
             for q_id in correct_answers
         }
 
-        all_correct = all(correct_answers[q_id] == user_answers[q_id] for q_id in correct_answers)
+        all_answered_correctly = all(correct_answers[q_id] == user_answers[q_id] for q_id in correct_answers)
 
-        return render(request, 'match/answer_questions.html', {
-            'profile': profile,
-            'questions': questions,
-            'success': "Success! You answered correctly." if all_correct else "Incorrect answer. Try again."
-        })
+        if all_answered_correctly:
 
-    return render(request, 'match/answer_questions.html', {
+            return render(request, 'profile/profile_detail.html', {
+                'profile': profile,
+                'dealbreaker_questions': questions,
+                'all_answered_correctly': True
+            })
+        else:
+
+            return render(request, 'profile/profile_details.html', {
+                'profile': profile,
+                'dealbreaker_questions': questions,
+                'all_answered_correctly': False,
+                'error_message': "Some answers are incorrect"
+            })
+
+    return render(request, 'profile/profile_detail.html', {
         'profile': profile,
-        'questions': questions
+        'dealbreaker_questions': questions,
+        'all_answered_correctly': False
     })
+
 
 
 class CustomLoginView(LoginView):
