@@ -206,3 +206,12 @@ h1, h2, h3 {
 .logo-c{
   color:rgb(220 53 69);
 }
+.register-container {
+  max-width: 450px;
+  margin: auto;
+  margin-top: 8vh;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: rgb(248 249 250);
+}
