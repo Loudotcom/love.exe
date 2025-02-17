@@ -9,6 +9,7 @@ urlpatterns = [
     path('update-profile/', views.update_profile, name='update-profile'),
     path('profile/', views.profile, name='profile'),
     path('match/like_dislike/', views.like_dislike, name='like_dislike'),
+    path('liked-profiles/', views.liked_profiles, name='liked-profiles'),
     path('match/', views.matching_view, name='match'),
     path('get_dealbreaker_questions/<int:profile_id>/', views.get_dealbreaker_questions, name='get_dealbreaker_questions'),
     path('answer-dealbreaker/<int:profile_id>/', views.answer_dealbreaker_questions, name='answer_dealbreaker_questions'),
