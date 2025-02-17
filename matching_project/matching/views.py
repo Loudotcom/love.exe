@@ -62,7 +62,7 @@ def login(request):
 
                     if user is not None:
                         auth.login(request, user)
-                        return redirect('home')
+                        return redirect('profile')
                     else:
                         print("Invalid username or password.")
                 else:
