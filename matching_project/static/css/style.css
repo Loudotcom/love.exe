@@ -1,10 +1,10 @@
 :root {
-  --passionate-red: #E63946;  /* Main accent color */
-  --blush-pink: #F4A9A8;      /* Soft accents */
-  --deep-rose: #C2185B;       /* Headings & text highlights */
-  --warm-peach: #FFB997;      /* Secondary backgrounds */
-  --elegant-wine: #6A2135;    /* Depth & contrast */
-  --soft-ivory: #FAF3E0;      /* Main background */
+  --passionate-red: #e63946; /* Main accent color */
+  --blush-pink: #f4a9a8; /* Soft accents */
+  --deep-rose: #c2185b; /* Headings & text highlights */
+  --warm-peach: #ffb997; /* Secondary backgrounds */
+  --elegant-wine: #6a2135; /* Depth & contrast */
+  --soft-ivory: #faf3e0; /* Main background */
 
   /* Additional Shades */
   --white: #ffffff;
@@ -12,14 +12,16 @@
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   background-color: var(--soft-ivory);
   color: var(--elegant-wine);
   padding-top: 58px;
 }
 
-h1, h2, h3 {
-  font-family: 'Montserrat', sans-serif;
+h1,
+h2,
+h3 {
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   color: var(--deep-rose);
   text-align: center;
@@ -51,7 +53,6 @@ h1, h2, h3 {
   text-transform: uppercase;
 }
 
-
 .navbar-toggler {
   border: none;
 }
@@ -63,7 +64,7 @@ h1, h2, h3 {
   align-items: left !important;
 }
 
-.navbar-nav .dropdown-left { 
+.navbar-nav .dropdown-left {
   text-align: left !important;
 }
 
@@ -96,8 +97,6 @@ h1, h2, h3 {
   font-weight: 700;
 }
 
-
-
 @media (max-width: 991px) {
   .navbar-collapse {
     background-color: var(--soft-ivory);
@@ -121,6 +120,8 @@ h1, h2, h3 {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 7px;
+  text-shadow: -1px 0 var(--soft-ivory), 0 1px var(--soft-ivory),
+    1px 0 var(--soft-ivory), 0 -1px var(--soft-ivory);
 }
 
 .profile-usertitle-job {
@@ -193,7 +194,6 @@ legend.form-label {
   font-size: 1rem !important;
 }
 
-
 .login-container {
   max-width: 400px;
   margin: auto;
@@ -204,12 +204,12 @@ legend.form-label {
   background-color: rgb(248 249 250);
 }
 
-.text-c a{
+.text-c a {
   color: #6a2135;
 }
 
-.logo-c{
-  color:rgb(220 53 69);
+.logo-c {
+  color: rgb(220 53 69);
 }
 .register-container {
   max-width: 450px;
@@ -221,7 +221,15 @@ legend.form-label {
   background-color: rgb(248 249 250);
 }
 
-footer { 
+.carousel-caption > h2 {
+  text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
+}
+
+.carousel-caption > p {
+  text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
+}
+
+footer {
   background-color: var(--elegant-wine);
   color: var(--soft-ivory);
 }
