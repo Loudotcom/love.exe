@@ -3,7 +3,8 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container-fluid">
         <!-- Ensure the user cannot access other pages once they register until they complete their profile -->
-        <a class="navbar-brand fw-bold" href="{% if request.path != '/matching/update-profile/' %}{% url 'home' %}{% else %}{% url 'update-profile'%}{% endif %}">
+        <a class="navbar-brand fw-bold"
+            href="{% if request.path != '/matching/update-profile/' %}{% url 'home' %}{% else %}{% url 'update-profile'%}{% endif %}">
             <!-- Insert site logo here -->
             <img src="{% static 'images/logo-bold.png' %}" height="45" class="d-inline-block align-top" alt="">
         </a>
@@ -25,11 +26,12 @@
                     <a class="nav-link text-center" href="{% url 'match' %}">Find your Match</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-center" href="{% url 'profile' %}">Profile</a>
+                    <a class="nav-link text-center" href="{% url 'match' %}">Matches</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-center" href="{% url 'update-profile' %}">Edit Profile ({{ user }})</a>
+                    <a class="nav-link text-center" href="{% url 'profile' %}">Your Profile</a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link text-center" href="{% url 'logout' %}">Logout</a>
                 </li>
