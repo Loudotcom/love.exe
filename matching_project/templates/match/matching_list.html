@@ -84,10 +84,10 @@
     
                     <div id="like-dislike-container-{{ profile.id }}" style="display:none; text-align: center; margin-top: 20px;">
                         <button class="like-button btn btn-success btn-sm" data-vote="like" style="margin-right: 15px;">
-                            Like (<span id="like-count-{{ profile.id }}">0</span>)
+                            Match (<span id="like-count-{{ profile.id }}">0</span>)
                         </button>
                         <button class="dislike-button btn btn-danger btn-sm" data-vote="dislike">
-                            Dislike (<span id="dislike-count-{{ profile.id }}">0</span>)
+                            Pass (<span id="dislike-count-{{ profile.id }}">0</span>)
                         </button>
                     </div>
     
@@ -120,6 +120,8 @@
             const messageContainer = document.getElementById(`message-container-${profileId}`);
             const inputs = form.querySelectorAll('input[type="radio"], button');
 
+            messageContainer.style.display = 'none';
+
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
@@ -137,7 +139,6 @@
                     document.getElementById(`dislike-count-${profileId}`).textContent = data.dislike_count;
 
                     likeDislikeContainer.style.display = 'block';
-                    messageContainer.style.display = 'block';
 
                     inputs.forEach(input => input.disabled = true);
                 } else {
@@ -151,32 +152,31 @@
         });
     });
     document.querySelectorAll('.like-button, .dislike-button').forEach(button => {
-        button.addEventListener('click', function(event) {
+        button.addEventListener('click', function() {
             const profileId = this.closest('.modal').id.split('-')[1];
             const vote = this.dataset.vote;
+            
+            const matchButton = document.querySelector(`#exampleModal-${profileId} .like-button`);
+            const passButton = document.querySelector(`#exampleModal-${profileId} .dislike-button`);
+            const messageContainer = document.getElementById(`message-container-${profileId}`);
 
-            const formData = new FormData();
-            formData.append('content_type_id', '{{ content_type.id }}');
-            formData.append('object_id', profileId);
-            formData.append('vote', vote);
-
-            fetch("{% url 'like_dislike' %}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    document.getElementById(`like-count-${profileId}`).textContent = data.likes;
-                    document.getElementById(`dislike-count-${profileId}`).textContent = data.dislikes;
-                } else {
-                    console.error('Error updating like/dislike:', data.message);
-                }
-            })
-            .catch(err => console.error('Error sending like/dislike request:', err));
+            if (vote === 'like') {
+                passButton.style.opacity = '0';
+                setTimeout(() => {
+                    passButton.style.display = 'none';
+                    messageContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        messageContainer.style.display = 'block';
+                        messageContainer.style.opacity = '1';
+                    }, 200);
+                }, 200);
+            } else if (vote === 'dislike') {
+                matchButton.style.opacity = '0';
+                setTimeout(() => {
+                    matchButton.style.display = 'none';
+                    messageContainer.style.display = 'none';
+                }, 200);
+            }
         });
     });
 </script>
