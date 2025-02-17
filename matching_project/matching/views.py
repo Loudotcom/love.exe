@@ -19,37 +19,58 @@ def home(request):
 
 
 def register(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save()
-            auth.login(request, user)
-            return redirect('update-profile')
-    else:
-        form = CustomUserCreationForm()
+
+    try:
+        if request.user.is_authenticated:
+            return redirect('home')
+
+        else:    
+            if request.method == 'POST':
+                form = CustomUserCreationForm(request.POST, request.FILES)
+                if form.is_valid():
+                    user = form.save()
+                    auth.login(request, user)
+                    return redirect('update-profile')
+            else:
+                form = CustomUserCreationForm()
+
+    except Exception as e:
+        print(str(e))
+        return redirect('home')
+
     return render(request, 'registration/register.html', {'form': form})
 
 
 
 def login(request):
 
-    form = LoginForm()
-
-    if request.method == 'POST':
-        form = LoginForm(request, data=request.POST)
-        if form.is_valid():
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-
-            user = authenticate(request, username=username, password=password)
-
-            if user is not None:
-                auth.login(request, user)
-                return redirect('home')
-            else:
-                print("Invalid username or password.")
+    try:
+        if request.user.is_authenticated:
+            return redirect('home')
+        
         else:
-            print(form.errors)
+
+            form = LoginForm()
+
+            if request.method == 'POST':
+                form = LoginForm(request, data=request.POST)
+                if form.is_valid():
+                    username = request.POST.get('username')
+                    password = request.POST.get('password')
+
+                    user = authenticate(request, username=username, password=password)
+
+                    if user is not None:
+                        auth.login(request, user)
+                        return redirect('home')
+                    else:
+                        print("Invalid username or password.")
+                else:
+                    print(form.errors)
+
+    except Exception as e:
+        print(str(e))
+        return redirect('home')
 
     return render(request, 'registration/login.html', {'form': form})
 
