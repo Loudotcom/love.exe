@@ -62,7 +62,7 @@ def login(request):
 
                     if user is not None:
                         auth.login(request, user)
-                        return redirect('home')
+                        return redirect('profile')
                     else:
                         print("Invalid username or password.")
                 else:
@@ -292,3 +292,21 @@ def like_dislike(request):
         })
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+@login_required
+def liked_profiles(request):
+    user = request.user
+    content_type = ContentType.objects.get_for_model(UserProfile)
+    liked_profiles = UserProfile.objects.filter(
+        id__in=LikeDislike.objects.filter(user=user, like=True, content_type=content_type).values_list('object_id', flat=True)
+    )
+    matched_profiles = []
+    for profile in liked_profiles:
+        if LikeDislike.objects.filter(user=profile.user, object_id=user.profile.id, like=True, content_type=content_type).exists():
+            matched_profiles.append(profile)
+
+    return render(request, 'profile/liked_profiles.html', {
+        'liked_profiles': liked_profiles,
+        'matched_profiles': matched_profiles
+    })

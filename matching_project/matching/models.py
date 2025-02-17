@@ -27,7 +27,7 @@ class LikeDislike(models.Model):
     like = models.BooleanField(null=True)
 
     class Meta:
-        unique_together = ('content_type', 'user_id', 'user')
+        unique_together = ('content_type', 'object_id', 'user')
 
     def __str__(self):
         return f'{self.user} - {self.content_object} - {self.like}'
