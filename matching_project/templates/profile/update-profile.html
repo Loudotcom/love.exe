@@ -2,13 +2,14 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% block content %}
-<section class="container-fluid mt-5 mb-3">
+<section class="container-fluid mb-3">
 
     <div class="row">
 
-        <h2 class="display-4 mb-5">Edit your Profile</h2>
+        <h2 class="display-4 mt-5">Edit your Profile</h2>
 
         <div class="col-lg-6 col-md-12 m-auto">
+            <br>
 
             <div class="profile-sidebar p-4 shadow-sm">
                 <form method="post" enctype="multipart/form-data">
@@ -79,7 +80,7 @@
 
     
                 <h2>Your Answers</h2>
-                <br>
+                
                 <ul>
                     {% for answer in dealbreaker_answers %}
                     <li class="list-unstyled"><strong>{{ answer.question.text }}</strong> - {{ answer.answer_yn|yesno:"Yes,No" }}</li>
@@ -97,6 +98,8 @@
         <hr>
 
     </div>
+
+    
 
 </section>
 {% endblock %}

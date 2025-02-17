@@ -107,11 +107,6 @@ class DealbreakerAnswerForm(forms.ModelForm):
             'answer_yn': 'answer_yn',
         }
 
-        label = {
-            'question': 'Question',
-            'answer_yn': 'Yes or No?',
-        }
-
         for field in self.fields:
             placeholder = placeholders[field]
             self.fields[field].widget.attrs['placeholder'] = placeholder
