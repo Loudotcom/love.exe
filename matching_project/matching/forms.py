@@ -44,16 +44,20 @@ class LoginForm(AuthenticationForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    country = forms.CharField(
-        widget=forms.TextInput(attrs={'list': 'country-list', 'placeholder': 'Enter your country...'}),
-        required=True
+    country = forms.ModelChoiceField(
+        queryset=Country.objects.all(),
+        empty_label="Select Country",
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
-    city = forms.CharField(
-        widget=forms.TextInput(attrs={'list': 'city-list', 'placeholder': 'Enter your city...'}),
-        required=True
+    city = forms.ModelChoiceField(
+        queryset=City.objects.all(),
+        empty_label="Select City",
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
     age = forms.IntegerField(max_value=100, min_value=18)
-    
+
     class Meta:
         model = UserProfile
         fields = ('bio', 'profile_picture', 'age', 'city', 'country', 'hobbies')
@@ -63,19 +67,16 @@ class UserProfileForm(forms.ModelForm):
         }
 
     def clean_city(self):
-        city_name = self.cleaned_data['city']
-        city = City.objects.filter(name__iexact=city_name).first()
+        city = self.cleaned_data['city']
         if not city:
-            raise forms.ValidationError("Selected city is not valid.")
+            raise forms.ValidationError("Please select a valid city.")
         return city
 
     def clean_country(self):
-        country_name = self.cleaned_data['country']
-        country = Country.objects.filter(name__iexact=country_name).first()
+        country = self.cleaned_data['country']
         if not country:
-            raise forms.ValidationError("Selected country is not valid.")
+            raise forms.ValidationError("Please select a valid country.")
         return country
-        
 
 
 class DealbreakerQuestionForm(forms.ModelForm):
