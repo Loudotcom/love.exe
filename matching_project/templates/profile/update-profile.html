@@ -1,64 +1,57 @@
-{% extends "base.html" %}]
+{% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% load static %}
+
 {% block content %}
 <section class="container-fluid mb-3">
-
     <div class="row">
-
         <h2 class="display-4 mt-5">Edit your Profile</h2>
-
         <div class="col-lg-6 col-md-12 m-auto">
             <br>
-
             <div class="profile-sidebar p-4 shadow-sm">
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <datalist id="country-list">
                         {% for country in countries %}
-                        <option value="{{ country.name }}">
-                            {% endfor %}
+                            <option value="{{ country.name }}">
+                        {% endfor %}
                     </datalist>
                     <datalist id="city-list">
                         {% for city in cities %}
-                        <option value="{{ city.name }}">
-                            {% endfor %}
+                            <option value="{{ city.name }}">
+                        {% endfor %}
                     </datalist>
                     <div class="d-flex">
                         <button type="submit" name="update_profile" class="btn btn-primary btn-sm mx-auto">Update Profile</button>
-
                     </div>
-    
-                    
                 </form>
-
             </div>
-
             <br>
-
             <hr>
-
             <br>
-
             <h2 class="display-4">Create your Dealbreakers</h2>
             <br>
 
             <div class="profile-sidebar text-center p-4 shadow-sm">
-    
-                
+                {% if messages %}
+                    <div class="alert-container">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <form method="post">
                     {% csrf_token %}
                     {{ question_form |crispy }}
                     <button type="submit" name="add_question" class="btn btn-primary btn-sm">Add Question</button>
                 </form>
-    
                 <hr>
-
 
                 <h2>Your Dealbreaker Questions</h2>
                 <br>
-    
                 <ul class="p-0">
                     {% for question in user_questions %}
                     <li class="list-unstyled">
@@ -78,9 +71,7 @@
 
                 <hr>
 
-    
                 <h2>Your Answers</h2>
-                
                 <ul>
                     {% for answer in dealbreaker_answers %}
                     <li class="list-unstyled"><strong>{{ answer.question.text }}</strong> - {{ answer.answer_yn|yesno:"Yes,No" }}</li>
@@ -88,18 +79,10 @@
                     <li class="list-unstyled">No answers yet.</li>
                     {% endfor %}
                 </ul>
-    
-    
             </div>
             <br>
-
         </div>
-
         <hr>
-
     </div>
-
-    
-
 </section>
 {% endblock %}

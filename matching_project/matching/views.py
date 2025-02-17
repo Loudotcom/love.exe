@@ -1,4 +1,5 @@
 from multiprocessing import context
+from django.contrib import messages
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.http import JsonResponse
@@ -98,8 +99,11 @@ def update_profile(request):
             new_question.creator = request.user
             new_question.save()
             user_profile.questions.add(new_question)
-            print(f"Question added: {new_question.text}")
+            messages.success(request, f'Question "{new_question.text}" added successfully!')
             return redirect('update-profile')
+        else:
+            messages.error(request, 'There was an error adding your question. Please try again.')
+
     else:
         question_form = DealbreakerQuestionForm()
 
@@ -112,7 +116,11 @@ def update_profile(request):
             answer.user_profile = user_profile
             answer.question = question
             answer.save()
-            return redirect('update-profile')
+            messages.success(request, 'Your answer has been submitted successfully!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'There was an error submitting your answer. Please try again.')
+
     else:
         answer_form = DealbreakerAnswerForm()
 
@@ -120,9 +128,6 @@ def update_profile(request):
     countries = Country.objects.all()
     user_questions = DealbreakerQuestion.objects.filter(creator=request.user)
     dealbreaker_answers = DealbreakerAnswer.objects.filter(user_profile=user_profile)
-
-    print(f"User's questions: {user_questions}")
-    print(f"User's answers: {dealbreaker_answers}")
 
     return render(request, 'profile/update-profile.html', {
         'form': form,
