@@ -1,4 +1,5 @@
 from multiprocessing import context
+from django.contrib import messages
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.http import JsonResponse
@@ -62,7 +63,7 @@ def login(request):
 
                     if user is not None:
                         auth.login(request, user)
-                        return redirect('home')
+                        return redirect('profile')
                     else:
                         print("Invalid username or password.")
                 else:
@@ -98,8 +99,11 @@ def update_profile(request):
             new_question.creator = request.user
             new_question.save()
             user_profile.questions.add(new_question)
-            print(f"Question added: {new_question.text}")
+            messages.success(request, f'Question "{new_question.text}" added successfully!')
             return redirect('update-profile')
+        else:
+            messages.error(request, 'There was an error adding your question. Please try again.')
+
     else:
         question_form = DealbreakerQuestionForm()
 
@@ -112,7 +116,11 @@ def update_profile(request):
             answer.user_profile = user_profile
             answer.question = question
             answer.save()
-            return redirect('update-profile')
+            messages.success(request, 'Your answer has been submitted successfully!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'There was an error submitting your answer. Please try again.')
+
     else:
         answer_form = DealbreakerAnswerForm()
 
@@ -120,9 +128,6 @@ def update_profile(request):
     countries = Country.objects.all()
     user_questions = DealbreakerQuestion.objects.filter(creator=request.user)
     dealbreaker_answers = DealbreakerAnswer.objects.filter(user_profile=user_profile)
-
-    print(f"User's questions: {user_questions}")
-    print(f"User's answers: {dealbreaker_answers}")
 
     return render(request, 'profile/update-profile.html', {
         'form': form,
@@ -292,3 +297,21 @@ def like_dislike(request):
         })
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+@login_required
+def liked_profiles(request):
+    user = request.user
+    content_type = ContentType.objects.get_for_model(UserProfile)
+    liked_profiles = UserProfile.objects.filter(
+        id__in=LikeDislike.objects.filter(user=user, like=True, content_type=content_type).values_list('object_id', flat=True)
+    )
+    matched_profiles = []
+    for profile in liked_profiles:
+        if LikeDislike.objects.filter(user=profile.user, object_id=user.profile.id, like=True, content_type=content_type).exists():
+            matched_profiles.append(profile)
+
+    return render(request, 'profile/liked_profiles.html', {
+        'liked_profiles': liked_profiles,
+        'matched_profiles': matched_profiles
+    })

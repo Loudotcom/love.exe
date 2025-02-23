@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="container mt-3 mb-5">
+    <h2 class="display-3 text-center mt-4 mb-4">Your Liked Profiles</h2>
+
+{% if liked_profiles %}
+    <div class="container">
+        <div class="row">
+            {% for profile in liked_profiles %}
+            <div class="col-md-4 mb-4">
+                <div class="card profile-card shadow-sm border-light">
+                    <div class="card-body text-center">
+                        <h3 class="card-title">{{ profile.user.username }}</h3>
+
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" width="120">
+                        {% else %}
+                            <img src="/static/default-profile.png" alt="Default Profile Picture" class="img-fluid rounded-circle mb-3" width="120">
+                        {% endif %}
+
+                        {% if profile in matched_profiles %}
+                            <p class="text-success"><strong>It's a match!</strong></p>
+                            <a href="{% url 'message_detail' profile.id %}" class="btn btn-success">Send a Message</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% else %}
+    <p class="text-center">You haven't liked any profiles yet.</p>
+{% endif %}
+</section>
+
+{% endblock %}

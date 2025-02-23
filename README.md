@@ -1,33 +1,22 @@
 # love.exe
 
-Link to deployed site
+[Link to deployed site](https://cirrusmatch-46cf2d377c0d.herokuapp.com)
 
 ## Contents
 
 ## Introduction
-<!-- TODO:-->
 
-###### [*Back to contents*](#contents)
+This project aims to produce an inclusive, dating-style website, where users are encouraged to meet based on hobbies and interests, rather than based on the visual aspect of how a potential match may look. Achieving this by ensuring that other users photos are blurred out until they have successfully passed any dealbreakers that user may have set.
 
 ## User Experience
 
-###### [*Back to contents*](#contents)
+### User Stories
 
-### Stories
-
-###### [*Back to contents*](#contents)
-
-#### External User Story
-<!-- TODO:
--->
-
-###### [*Back to contents*](#contents)
-
-#### Site Owner User Story
-<!-- TODO:
--->
-
-###### [*Back to contents*](#contents)
+- As a user, I want to be able to create an account and set my preferences, including my hobbies/interests, dealbreakers and upload a profile picture
+- As a user, I don't want people to be able to send me messages if they have any of my dealbreakers
+- As a user, I want to be able to search for potential matches
+- As a user, I want to be able to filter the potential matches based on hobbies
+- As a user, I want to be able to communicate with potential matches
 
 ### Strategy
 
@@ -35,21 +24,13 @@ Link to deployed site
 
 We chose to work in sprints, encouraging an agile development pipeline, where we are able to quickly adjust and respond to challenges in the development and address any issues that may occur in a fast and efficient manner.
 
-###### [*Back to contents*](#contents)
-
 #### MoSCoW
 
 We used a github project board - allowing for the use of a MoSCoW prioritisation. This allowed us to keep foccused on the tasks that were required for the projects, ensuring a timely development timeline in keeping delivering a functioning project whilst working in defined sprints.
 
-###### [*Back to contents*](#contents)
-
 ### Scope
 
 We wanted to create an inclusive website for matching people with desired interests and hobbies - while taking into account each users individual dealbreakers. To achieve this approach we decided that the photo of other users will be blurred until you have successfully passed the dealbreaker questions for another user - allowing for matches to be based more heavily on hobby and interest compatibilities and reducing the superficial nature matching people based solely on photos.
-
-<!-- TODO: -->
-
-###### [*Back to contents*](#contents)
 
 #### Project Setup
 
@@ -64,66 +45,83 @@ web: gunicorn matching_project.wsgi --chdir matching_project
 ```
 
 #### .env setup
+
 ```text
 SECRET_KEY=`Sanitised_Key`
 DEBUG=True
 ```
 
 #### Entity Relationship Diagrams
-<!-- TODO:
 
 ```plaintext
-text
-``` -->
++-----------------+       +-----------------+       +-----------------+
+|    CustomUser   |       |   UserProfile   |       |     Message     |
++-----------------+       +-----------------+       +-----------------+
+| - id            |<----->| - user_id       |       | - id            |
+| - username      |       | - bio           |       | - sender_id     |
+| - email         |       | - profile_pic   |       | - recipient_id  |
+| - password      |       | - age           |       | - content       |
++-----------------+       | - city_id       |       | - sent_at       |
+                          | - country_id    |       | - read_at       |
+                          | - created_at    |       +-----------------+
+                          | - updated_at    |
+                          +-----------------+
+                                 ^
+                                 |
+                                 |
+                          +-----------------+
+                          |     Hobby       |
+                          +-----------------+
+                          | - id            |
+                          | - name          |
+                          +-----------------+
+
++-----------------+       +-----------------+       +-----------------+
+| DealbreakerQues |       | DealbreakerAns  |       |   LikeDislike   |
++-----------------+       +-----------------+       +-----------------+
+| - id            |<----->| - user_profile  |       | - id            |
+| - text          |       | - question_id   |       | - user_id       |
+| - question_type |       | - answer_yn     |       | - content_type  |
+| - creator_id    |       +-----------------+       | - object_id     |
++-----------------+                                 | - content_object|
+                                                    | - like          |
+                                                    +-----------------+
+```
 
 ### Wireframes
 
 #### Landing Page
 
-![Landing Page](docs/wireframes/landing-page.png)
+![Landing Page](docs/wireframes/landing.png)
 
 #### Register Page
 
-![Register Page](docs/wireframes/register.png)
+![Register](docs/wireframes/register.png)
 
 #### Login Page
 
-![Login Page](docs/wireframes/login.png)
-
-#### Logout Page
-
-![Logout Page](docs/wireframes/logout.png)
+![Login](docs/wireframes/login.png)
 
 #### Edit Profile Page
 
-![Edit Profile](docs/wireframes/edit-profile.png)
+![Edit Profile](docs/wireframes/profile.png)
 
-TODO:
+#### Search Page
+
+![alt text](docs/wireframes/search.png)
 
 ## Design
-
 
 ### Colour Scheme
 
 We chose to go with a red, yellow and white colour scheme, keeping the pages light and inviting.
 
-### Imagery
+<!-- ### Imagery
 
-TODO:
-<!-- Where are user images stored
-How do users upload profile pictures -->
+As the project is run on heroku using eco dynos, any user uploaded images will be ephemeral, due to this we have linked the location of images to cloudinary -->
 
 ### Typography
-TODO: 
-
-
-## Website Features
-TODO:
-
-
-## Future Features
-TODO:
-<!-- Is there anything we may want to add later on? -->
+We used fonts found on google fonts for the project, opting to choose for inviting, easy to read fonts to welcome people into using our site - and de-cloud the dating game to find their ideal match!
 
 ## Technologies Used
 
@@ -184,7 +182,13 @@ As part of the development of the project, it was beneficial to perform our own 
 
 ## Credits
 
+<!-- ### [Cloudinary](https://cloudinary.com)
+
+Cloudinary was used to allow for users to upload their photos and they remain persistent -->
+
 ### [Google Fonts](https://fonts.google.com)
+
+Google fonts was used to find fonts to use for the project, these fonts are [Monserrat](https://fonts.google.com/specimen/Montserrat), [Nunito](https://fonts.google.com/specimen/Nunito) and [Roboto](https://fonts.google.com/specimen/Roboto).
 
 ### [Unsplash](https://unsplash.com)
 

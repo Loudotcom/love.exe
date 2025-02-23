@@ -12,14 +12,16 @@
             <br>
 
             <div class="profile-sidebar p-5 shadow-sm">
-                <div>
+                <div class="overflow-y-auto" style="max-height: 200px;">
                     {% for message in messages %}
-                        <p><strong>{{ message.sender.username }}:</strong> {{ message.content }} <em>{{ message.sent_at }}</em></p>
+                        <p class="bg-white rounded p-3 shadow-sm"><strong>{{ message.sender.username }}:</strong> {{ message.content }} <em>{{ message.sent_at }}</em></p>
                     {% endfor %}
                 </div>
+                <br>
+                
                 <form method="POST">
                     {% csrf_token %}
-                    <div class="row">
+                    <div class="row" data-bs-spy="scroll" data-bs-target="#navbar-example3" data-bs-offset="0" tabindex="0">
                         <textarea class="p-5 rounded mx-auto" name="content" required></textarea>
 
                     </div>
@@ -33,6 +35,7 @@
                 </form>
 
             </div>
+            <br>
 
         </div>
 
