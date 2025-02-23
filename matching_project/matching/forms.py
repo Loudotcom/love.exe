@@ -7,26 +7,40 @@ from cities_light.models import City, Country
 
 
 class CustomUserCreationForm(UserCreationForm):
-    """
-    age = forms.IntegerField(required=True)
-    location = forms.CharField(max_length=255)
-    profile_picture = forms.ImageField(required=False)
-    hobbies = forms.ModelMultipleChoiceField(
-        queryset=Hobby.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control w-100'})
     )
-    """
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control w-100'})
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control w-100'})
+    )
+
     class Meta:
         model = CustomUser
-        fields = ('username', 'password1', 'password2',)
+        fields = ['username', 'password1', 'password2']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+        return user
 
 
 class LoginForm(AuthenticationForm):
-
-    username = forms.CharField(widget=TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your username'}))
-
-    password = forms.CharField(widget=PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter your password'}))
+    username = forms.CharField(
+        widget=TextInput(attrs={
+            'class': 'form-control w-100',
+            'style': 'height: 50px;'
+        })
+    )
+    password = forms.CharField(
+        widget=PasswordInput(attrs={
+            'class': 'form-control w-100',
+            'style': 'height: 50px;'
+        })
+    )
 
 
 class UserProfileForm(forms.ModelForm):
@@ -91,11 +105,6 @@ class DealbreakerAnswerForm(forms.ModelForm):
         placeholders = {
             'question': 'question',
             'answer_yn': 'answer_yn',
-        }
-
-        label = {
-            'question': 'Question',
-            'answer_yn': 'Yes or No?',
         }
 
         for field in self.fields:

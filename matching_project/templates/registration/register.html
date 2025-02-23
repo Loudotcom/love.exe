@@ -1,61 +1,36 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="container">
+<div class="container mt-3 mb-5">
     <div class="register-container">
         <h3 class="text-center mb-4 logo-c">Create an Account</h3>
-        <form>
+
+        <form method="post">
+            {% csrf_token %}
+
             <div class="mb-3">
-                <label for="fullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
+                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                {{ form.username }}
             </div>
+
             <div class="mb-3">
-                <label for="email" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                {{ form.password1 }}
             </div>
+
             <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Create a password" required>
+                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                {{ form.password2 }}
             </div>
-            <div class="mb-3">
-                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
-            </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="agreeTerms" required>
-                <label class="form-check-label text-c" for="agreeTerms">I agree to the <a href="#">Terms & Conditions</a></label>
-            </div>
+
+
+
             <button type="submit" class="btn btn-primary w-100">Register</button>
+
             <div class="text-center mt-3 text-c">
                 Already have an account? <a href="{% url 'login' %}">Sign In</a>
             </div>
         </form>
     </div>
 </div>
-
-
-<section class="bg-slate-500">
-    <h1>Register</h1>
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
-
-    {% if form.errors %}
-        <div style="color: red;">
-            <p>There were errors with your submission:</p>
-            <ul>
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-</section>
-
-
 {% endblock %}

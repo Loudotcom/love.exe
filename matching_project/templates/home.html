@@ -10,26 +10,45 @@
             <div class="carousel-item active">
                 <img src="{% static 'crousel4.png' %}" class="d-block w-100" alt="Dating Image 1">
                 <div class="carousel-caption d-none d-md-block">
-                    <h2>Find Your Perfect Match</h2>
-                    <p>Join thousands of singles looking for love.</p>
-                    <a href="#" class="btn btn-light">Get Started</a>
+                    {% if request.user.is_authenticated %}
+                        <h2>Find Your Perfect Match</h2>
+                        <p>Join thousands of singles looking for love.</p>
+                    {% else %}
+                        <h2>Find Your Perfect Match</h2>
+                        <p>Join thousands of singles looking for love.</p>
+                        <a href="{% url 'register' %}" class="btn btn-light">Get Started</a>
+                    {% endif %}
                 </div>
             </div>
             <div class="carousel-item">
                 <img src="{% static 'crousel7.png' %}" class="d-block w-100" alt="Dating Image 2">
                 <div class="carousel-caption d-none d-md-block">
-                    <h2>Love is Just a Click Away</h2>
-                    <p>Connect with amazing people near you.</p>
-                    <a href="#" class="btn btn-light">Sign Up Now</a>
+                    {% if request.user.is_authenticated %}
+                        <h2>Love is Just a Click Away</h2>
+                        <p>Connect with amazing people near you.</p>
+                
+                    {% else %}
+                        <h2>Love is Just a Click Away</h2>
+                        <p>Connect with amazing people near you.</p>
+                        <a href="{% url 'register' %}" class="btn btn-light">Sign Up Now</a>
+                    {% endif %}
                 </div>
             </div>
             <div class="carousel-item">
                 <img src="{% static 'crousel2.png' %}" class="d-block w-100" alt="Dating Image 3">
+                
                 <div class="carousel-caption d-none d-md-block">
+                {% if request.user.is_authenticated %}
                     <h2>Start Your Love Story Today</h2>
                     <p>We make finding love easy and fun.</p>
-                    <a href="#" class="btn btn-light">Join Us</a>
+
+                {% else %}
+                    <h2>Start Your Love Story Today</h2>
+                    <p>We make finding love easy and fun.</p>
+                    <a href="{% url 'register' %}" class="btn btn-light">Join Us</a>
+                {% endif %}
                 </div>
+                
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
@@ -71,25 +90,31 @@
         <div class="row mt-4">
             <div class="col-md-6">
                 <blockquote class="blockquote">
-                    <p>“I found my soulmate here. Thank you LoveMatch!”</p>
-                    <footer class="blockquote-footer">Emily, 29</footer>
+                    <p><em>“I found my soulmate here. Thank you Cirrus!”</em></p>
+                    <p>Emily, 29</p>
                 </blockquote>
             </div>
             <div class="col-md-6">
                 <blockquote class="blockquote">
-                    <p>“The best dating site ever. Highly recommended!”</p>
-                    <footer class="blockquote-footer">Michael, 35</footer>
+                    <p><em>“The best dating site ever. Highly recommended!”</em></p>
+                    <p>Michael, 35</p>
                 </blockquote>
             </div>
         </div>
     </div>
 </section>
 
+{% if request.user.is_authenticated %}
+
+{% else %}
 <!-- Call to Action -->
 <section class="text-center py-5 bg-danger text-white">
     <h2 class="text-white">Join Now and Start Dating</h2>
-    <a href="#" class="btn btn-light btn-lg">Sign Up for Free</a>
+
+    <a href="{% url 'register' %}" class="btn btn-light btn-lg">Sign Up for Free</a>
+
 </section>
+{% endif %}
 
 
 

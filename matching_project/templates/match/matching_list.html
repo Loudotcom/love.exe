@@ -2,16 +2,22 @@
 {% load static %}
 
 {% block content %}
-<h2>Find Your Match</h2>
+<section class="container mt-5 mb-5">
+    <h2 class="display-4 matching-h">Find Your Match</h2>
 
 <form method="GET">
     {% csrf_token %}
-    <label>Select up to 3 hobbies:</label><br>
-    {% for hobby in hobbies %}
-        <input type="checkbox" name="hobbies" value="{{ hobby.name }}" 
-            {% if hobby.name in selected_hobbies %} checked {% endif %}>
-        {{ hobby.name }}
-    {% endfor %}
+    <label for="hobbies">Select up to 3 hobbies:</label>
+
+    <div class="hobbies-container">
+        {% for hobby in hobbies %}
+            <div>
+                <input type="checkbox" name="hobbies" value="{{ hobby.name }}" 
+                    {% if hobby.name in selected_hobbies %} checked {% endif %}>
+                <span>{{ hobby.name }}</span>
+            </div>
+        {% endfor %}
+    </div>
     <br>
     <button type="submit" class="btn btn-primary btn-sm">Filter</button>
 </form>
@@ -19,13 +25,13 @@
 <hr>
 
 {% for profile in profiles %}
-    <div class="profile-card card mb-3" style="max-width: 18rem;">
+    <div class="profile-card card mb-3 matching-profile-card">
         <div class="row g-0">
             <div class="col-md-4">
                 {% if profile.profile_picture %}
-                <img src="{{ profile.profile_picture.url }}" class="img-fluid rounded-start" alt="Profile Picture">
+                <img src="{{ profile.profile_picture.url }}" class="blurred-image img-fluid rounded-start profile-img" alt="Profile Picture">
                 {% else %}
-                <img src="/static/default-profile.png" class="img-fluid rounded-start" alt="Default Profile Picture">
+                <img src="/static/default-profile.png" class="blurred-image img-fluid rounded-start profile-img" alt="Default Profile Picture">
                 {% endif %}
             </div>
             <div class="col-md-8">
@@ -33,50 +39,63 @@
                     <p><strong>{{ profile.user.username }}</strong></p>
                     <p class="card-text">{{ profile.bio|truncatewords:10 }}</p>
                     <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ profile.id }}">
-                        View Dealbreaker Questions
+                        View More
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-<div class="modal fade" id="exampleModal-{{ profile.id }}" tabindex="-1" aria-labelledby="exampleModalLabel-{{ profile.id }}" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel-{{ profile.id }}">Dealbreaker Questions for {{ profile.user.username }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="modal-content-{{ profile.id }}"></div>
 
-                <form id="dealbreaker-form-{{ profile.id }}" method="POST" action="{% url 'answer_dealbreaker_questions' profile.id %}" data-profile-id="{{ profile.id }}">
-                    {% csrf_token %}
-                    {% for question in profile.questions.all %}
-                        <div class="mb-3">
-                            <label class="form-label">{{ question.text }}</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="True" required>
-                                <label class="form-check-label">Yes</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="False" required>
-                                <label class="form-check-label">No</label>
-                            </div>
-                        </div>
-                    {% endfor %}
-                    <div id="error-message-{{ profile.id }}" class="alert alert-danger" style="display:none;">Sorry, this match is not for you.</div>
-                    <button type="submit" class="btn btn-primary btn-sm" id="submit-button-{{ profile.id }}">Submit Answers</button>
-                </form>
-
-                <div id="like-dislike-container-{{ profile.id }}" style="display:none;">
-                    
-                    <button class="like-button btn btn-success btn-sm" data-vote="like">Like (<span id="like-count-{{ profile.id }}">0</span>)</button>
-                    <button class="dislike-button btn btn-danger btn-sm" data-vote="dislike">Dislike (<span id="dislike-count-{{ profile.id }}">0</span>)</button>
+    <div class="modal fade" id="exampleModal-{{ profile.id }}" tabindex="-1" aria-labelledby="exampleModalLabel-{{ profile.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 800px;">
+            <div class="modal-content" style="background-color: var(--soft-ivory); border-radius: 10px;">
+                <div class="modal-header" style="border-bottom: 2px solid var(--elegant-wine);">
+                    <h5 class="modal-title" id="exampleModalLabel-{{ profile.id }}" style="color: var(--deep-rose); font-size: 1.25rem;">
+                        Dealbreaker Questions for {{ profile.user.username }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
-                <div id="message-container-{{ profile.id }}" style="display:none;">
-                    <a href="{% url 'message_detail' profile_id=profile.id %}" class="btn btn-primary btn-sm">Message {{ profile.user.username }}</a>
+                <div class="modal-body">
+                    <p style="font-size: 1.1rem; color: var(--elegant-wine); padding-bottom: 20px;">
+                        Think you know what makes {{ profile.user.username }} tick? 🧠💘 Get all the answers right, and you'll unlock the secrets to finding your perfect match! 😎
+                    </p>
+                    <div id="modal-content-{{ profile.id }}"></div>
+                    <form id="dealbreaker-form-{{ profile.id }}" method="POST" action="{% url 'answer_dealbreaker_questions' profile.id %}" data-profile-id="{{ profile.id }}">
+                        {% csrf_token %}
+                        {% for question in profile.questions.all %}
+                            <div class="mb-4">
+                                <label class="form-label" style="font-size: 1.1rem; color: var(--deep-rose);">{{ question.text }}</label>
+                                <div class="form-check" style="margin-bottom: 10px;">
+                                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="True" required>
+                                    <label class="form-check-label" style="color: var(--deep-rose); font-size: 1.05rem;">Yes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="False" required>
+                                    <label class="form-check-label" style="color: var(--deep-rose); font-size: 1.05rem;">No</label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div id="error-message-{{ profile.id }}" class="alert alert-danger" style="display:none; font-size: 1rem; background-color: var(--elegant-wine); color: var(--white);"></div>
+                        <button type="submit" class="btn btn-primary btn-sm" id="submit-button-{{ profile.id }}" style="width: 100%; font-size: 1.1rem; border-radius: 5px; background-color: var(--deep-rose);">
+                            Submit Answers
+                        </button>
+                    </form>
+    
+                    <div id="like-dislike-container-{{ profile.id }}" style="display:none; text-align: center; margin-top: 20px;">
+                        <button class="like-button btn btn-success btn-sm" data-vote="like" style="margin-right: 15px;">
+                            Match (<span id="like-count-{{ profile.id }}">0</span>)
+                        </button>
+                        <button class="dislike-button btn btn-danger btn-sm" data-vote="dislike">
+                            Pass (<span id="dislike-count-{{ profile.id }}">0</span>)
+                        </button>
+                    </div>
+    
+                    <div id="message-container-{{ profile.id }}" style="display:none; text-align: center; margin-top: 20px;">
+                        <a href="{% url 'message_detail' profile_id=profile.id %}" class="btn btn-primary btn-sm" style="width: 100%; border-radius: 5px; background-color: var(--passionate-red); color: var(--white);">
+                            Message {{ profile.user.username }}
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,9 +105,6 @@
 {% empty %}
     <p>No matches found. Try different hobbies.</p>
 {% endfor %}
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
 
 <script>
     document.querySelectorAll('[id^="dealbreaker-form-"]').forEach(form => {
@@ -103,6 +119,8 @@
             const likeDislikeContainer = document.getElementById(`like-dislike-container-${profileId}`);
             const messageContainer = document.getElementById(`message-container-${profileId}`);
             const inputs = form.querySelectorAll('input[type="radio"], button');
+
+            messageContainer.style.display = 'none';
 
             fetch(form.action, {
                 method: 'POST',
@@ -121,7 +139,6 @@
                     document.getElementById(`dislike-count-${profileId}`).textContent = data.dislike_count;
 
                     likeDislikeContainer.style.display = 'block';
-                    messageContainer.style.display = 'block';
 
                     inputs.forEach(input => input.disabled = true);
                 } else {
@@ -135,32 +152,31 @@
         });
     });
     document.querySelectorAll('.like-button, .dislike-button').forEach(button => {
-        button.addEventListener('click', function(event) {
+        button.addEventListener('click', function() {
             const profileId = this.closest('.modal').id.split('-')[1];
             const vote = this.dataset.vote;
+            
+            const matchButton = document.querySelector(`#exampleModal-${profileId} .like-button`);
+            const passButton = document.querySelector(`#exampleModal-${profileId} .dislike-button`);
+            const messageContainer = document.getElementById(`message-container-${profileId}`);
 
-            const formData = new FormData();
-            formData.append('content_type_id', '{{ content_type.id }}');
-            formData.append('object_id', profileId);
-            formData.append('vote', vote);
-
-            fetch("{% url 'like_dislike' %}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    document.getElementById(`like-count-${profileId}`).textContent = data.likes;
-                    document.getElementById(`dislike-count-${profileId}`).textContent = data.dislikes;
-                } else {
-                    console.error('Error updating like/dislike:', data.message);
-                }
-            })
-            .catch(err => console.error('Error sending like/dislike request:', err));
+            if (vote === 'like') {
+                passButton.style.opacity = '0';
+                setTimeout(() => {
+                    passButton.style.display = 'none';
+                    messageContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        messageContainer.style.display = 'block';
+                        messageContainer.style.opacity = '1';
+                    }, 200);
+                }, 200);
+            } else if (vote === 'dislike') {
+                matchButton.style.opacity = '0';
+                setTimeout(() => {
+                    matchButton.style.display = 'none';
+                    messageContainer.style.display = 'none';
+                }, 200);
+            }
         });
     });
 </script>

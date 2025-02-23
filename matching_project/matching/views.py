@@ -19,37 +19,58 @@ def home(request):
 
 
 def register(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save()
-            auth.login(request, user)
-            return redirect('update-profile')
-    else:
-        form = CustomUserCreationForm()
+
+    try:
+        if request.user.is_authenticated:
+            return redirect('home')
+
+        else:    
+            if request.method == 'POST':
+                form = CustomUserCreationForm(request.POST, request.FILES)
+                if form.is_valid():
+                    user = form.save()
+                    auth.login(request, user)
+                    return redirect('update-profile')
+            else:
+                form = CustomUserCreationForm()
+
+    except Exception as e:
+        print(str(e))
+        return redirect('home')
+
     return render(request, 'registration/register.html', {'form': form})
 
 
 
 def login(request):
 
-    form = LoginForm()
-
-    if request.method == 'POST':
-        form = LoginForm(request, data=request.POST)
-        if form.is_valid():
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-
-            user = authenticate(request, username=username, password=password)
-
-            if user is not None:
-                auth.login(request, user)
-                return redirect('home')
-            else:
-                print("Invalid username or password.")
+    try:
+        if request.user.is_authenticated:
+            return redirect('home')
+        
         else:
-            print(form.errors)
+
+            form = LoginForm()
+
+            if request.method == 'POST':
+                form = LoginForm(request, data=request.POST)
+                if form.is_valid():
+                    username = request.POST.get('username')
+                    password = request.POST.get('password')
+
+                    user = authenticate(request, username=username, password=password)
+
+                    if user is not None:
+                        auth.login(request, user)
+                        return redirect('home')
+                    else:
+                        print("Invalid username or password.")
+                else:
+                    print(form.errors)
+
+    except Exception as e:
+        print(str(e))
+        return redirect('home')
 
     return render(request, 'registration/login.html', {'form': form})
 
@@ -181,16 +202,24 @@ def answer_dealbreaker_questions(request, profile_id):
 
         if all_answered_correctly:
             profile_html = f"""
-                <div>
-                    <p><strong>Bio:</strong> {profile.bio}</p>
-                    <p><strong>Age:</strong> {profile.age}</p>
-                    <p><strong>City:</strong> {profile.city.name}</p>
-                    <p><strong>Country:</strong> {profile.country.name}</p>
-                    <p><strong>Hobbies:</strong> {", ".join(hobby.name for hobby in profile.hobbies.all())}</p>
-                    <img src="{profile.profile_picture.url if profile.profile_picture else '/static/default-profile.png'}" alt="Profile Picture" width="150">
+                <div class="profile-details" style="padding: 10px; border-radius: 8px; background-color: var(--soft-ivory); color: var(--elegant-wine); display: flex; flex-direction: row;">
+                    <!-- Profile Image on the Left -->
+                    <div class="profile-image" style="flex: 0 0 150px; margin-right: 20px; text-align: center;">
+                        <img src="{profile.profile_picture.url if profile.profile_picture else '/static/default-profile.png'}" alt="Profile Picture" class="img-fluid" style="width: 150px; height: 150px; border-radius: 0;">
+                    </div>
+                    
+                    <!-- Profile Info on the Right -->
+                    <div class="profile-header" style="flex: 1; display: flex; justify-content: flex-start; flex-direction: column;">
+                        <h4 style="color: var(--deep-rose); margin-bottom: 10px;">Profile Details</h4>
+                        <p><strong>Bio:</strong> {profile.bio}</p>
+                        <p><strong>Age:</strong> {profile.age}</p>
+                        <p><strong>City:</strong> {profile.city.name}</p>
+                        <p><strong>Country:</strong> {profile.country.name}</p>
+                        <p><strong>Hobbies:</strong> {", ".join(hobby.name for hobby in profile.hobbies.all())}</p>
+                    </div>
                 </div>
             """
-
+       
             like_count = LikeDislike.objects.filter(content_type=ContentType.objects.get_for_model(UserProfile), object_id=profile.id, like=True).count()
             dislike_count = LikeDislike.objects.filter(content_type=ContentType.objects.get_for_model(UserProfile), object_id=profile.id, like=False).count()
 
@@ -200,6 +229,7 @@ def answer_dealbreaker_questions(request, profile_id):
                 'like_count': like_count,
                 'dislike_count': dislike_count
             })
+
         else:
             return JsonResponse({'status': 'error', 'message': "Sorry, this match is not for you."})
 
